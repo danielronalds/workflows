@@ -1,11 +1,14 @@
 use std::process::Command;
 use std::process::Output;
 
+mod repo;
+use repo::Repo;
+
 fn main() {
     let output = get_repos_raw();
 
     for repo in extract_repos(output) {
-        println!("NAME: {}, \nURL: {}\n", repo.name, repo.url);
+        println!("NAME: {}, \nURL: {}\n", repo.name(), repo.url());
     }
 }
 
@@ -18,19 +21,6 @@ fn get_repos_raw() -> Option<Output> {
         .arg("1000")
         .output()
         .ok()
-}
-
-struct Repo {
-    name: String,
-    url: String,
-}
-
-impl Repo {
-    pub fn new<T: Into<String>>(name: T, url: T) -> Self {
-        let name = name.into();
-        let url = format!("https://www.github.com/{}.git", url.into());
-        Self { name, url }
-    }
 }
 
 /// Gets the list of repos from the "gh repo list" command output
@@ -48,7 +38,7 @@ fn extract_repos(output: Option<Output>) -> Vec<Repo> {
                 let name = repo_string.split('/').nth(1);
                 name.map(|name| Repo::new(name, repo_string))
             })
-            .filter(|repo| !repo.name.is_empty())
+            .filter(|repo| !repo.name().is_empty())
             .collect();
 
         return repos;
