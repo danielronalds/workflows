@@ -18,15 +18,15 @@ impl Repo {
     ///
     /// # Arguments
     ///
-    /// - `name` The name of the repo
-    /// - `url`  The URL of the repo, in the format "{user}/{name}"
+    /// - `name`   The name of the repo
+    /// - `local`  Whether the projects exists in ~/Projects/
     ///
     /// # Returns
     ///
     /// A Repo struct
-    pub fn new<T: Into<String>>(name: T) -> Self {
+    pub fn new<T: Into<String>>(name: T, local: bool) -> Self {
         let name = name.into();
-        Self { name, local: false }
+        Self { name, local }
     }
 
     /// The name of the repo
@@ -34,10 +34,16 @@ impl Repo {
         self.name.clone()
     }
 
+    /// Whether the project already exists in ~/Projects
     pub fn local(&self) -> bool {
         self.local
     }
 
+    /// Sets whether the project is local or not
+    ///
+    /// # Parameters
+    ///
+    /// - `value` Whether the project is local or not
     pub fn set_local(&mut self, value: bool) {
         self.local = value
     }

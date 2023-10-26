@@ -16,24 +16,13 @@ pub fn get_project_root(project: &Repo) -> PathBuf {
 }
 
 pub fn get_projects() -> Vec<Repo> {
-    let local_projects: Vec<Repo> = get_local_projects()
-        .iter()
-        .map(|x| {
-            let mut repo = Repo::new(x);
-            repo.set_local(true);
-            repo
-        })
-        .collect();
+    let local_projects: Vec<Repo> = get_local_projects();
 
-    let github_projects = get_users_repos();
+    let github_projects = get_users_repos(&local_projects);
 
     local_projects
         .iter()
-        .chain(
-            github_projects
-                .iter()
-                .filter(|repo| !local_projects.contains(repo)),
-        )
+        .chain(github_projects.iter())
         .map(|repo| repo.to_owned())
         .collect()
 }
@@ -63,28 +52,32 @@ pub fn clone_repo(repo: &Repo) -> io::Result<()> {
 /// # Returns
 ///
 /// A vec of strings containing the names of the directories in the project folder
-fn get_local_projects() -> Vec<String> {
+pub fn get_local_projects() -> Vec<Repo> {
     let home = dirs::home_dir().expect("Couldn't load home directory!");
     let entries = fs::read_dir(home.join(PROJECTS_DIR)).unwrap();
 
-    let directories: Vec<String> = entries
+    let local_repos: Vec<Repo> = entries
         .filter_map(|file| {
             let path = file.ok()?.path();
             if !path.is_dir() {
                 return None;
             }
-            path.file_name()?.to_str().map(|x| x.to_owned())
+            path.file_name()?.to_str().map(|x| Repo::new(x, true))
         })
         .collect();
-    return directories;
+    return local_repos;
 }
 
-/// Gets the list of repos from the "gh repo list" command output
+/// Gets the list of repos from the "gh repo list" command output, filtering out local projects
+///
+/// # Parameters
+///
+/// - `local_projects` Repo structs to filter out
 ///
 /// # Returns
 ///
 /// A vec of repo structs
-fn get_users_repos() -> Vec<Repo> {
+pub fn get_users_repos(local_projects: &[Repo]) -> Vec<Repo> {
     let output = Command::new("gh")
         .args(["repo", "list", "--limit", "1000"])
         .output()
@@ -105,9 +98,9 @@ fn get_users_repos() -> Vec<Repo> {
             .iter()
             .filter_map(|repo_string| {
                 let name = repo_string.split('/').nth(1);
-                name.map(|name| Repo::new(name))
+                name.map(|name| Repo::new(name, false))
             })
-            .filter(|repo| !repo.name().is_empty())
+            .filter(|repo| !repo.name().is_empty() && !local_projects.contains(repo))
             .collect();
 
         return repos;

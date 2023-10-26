@@ -1,4 +1,6 @@
-use std::io;
+use std::io::{self};
+
+use fzf_intergration::run_fzf;
 
 use crate::{repo::Repo, tmuxinator_intergration::run_tmuxinator};
 
@@ -6,17 +8,14 @@ mod repo;
 
 mod projects;
 
+mod fzf_intergration;
+
 mod tmuxinator_intergration;
 
 const TERMINAL: &str = "kitty";
 
 fn main() -> io::Result<()> {
-    let projects = projects::get_projects();
-
-    let project = rust_fzf::select(
-        projects.iter().map(|x| x.name()).collect(),
-        vec!["--layout=reverse".to_owned()],
-    );
+    let (project, projects) = run_fzf();
 
     let selected_projects: Vec<Repo> = projects
         .iter()
