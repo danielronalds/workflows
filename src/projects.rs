@@ -63,6 +63,10 @@ fn get_users_repos() -> Vec<Repo> {
         .ok();
 
     if let Some(output) = output {
+        if String::from_utf8_lossy(&output.stderr).contains("error connecting") {
+            return vec![]
+        }
+
         let repo_strings: Vec<String> = String::from_utf8_lossy(&output.stdout)
             .split_whitespace()
             .filter(|x| x.contains('/'))
