@@ -1,11 +1,19 @@
 use std::{
     fs, io,
+    path::PathBuf,
     process::{Command, Stdio},
 };
 
 use crate::repo::Repo;
 
 const PROJECTS_DIR: &str = "Projects/";
+
+pub fn get_project_root(project: &Repo) -> PathBuf {
+    dirs::home_dir()
+        .expect("Couldn't get home directory")
+        .join(PROJECTS_DIR)
+        .join(format!("{}/", project.name()))
+}
 
 pub fn get_projects() -> Vec<Repo> {
     let local_projects: Vec<Repo> = get_local_projects()
