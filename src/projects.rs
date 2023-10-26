@@ -1,4 +1,7 @@
-use std::{fs, process::Command};
+use std::{
+    fs, io,
+    process::{Command, Stdio},
+};
 
 use crate::repo::Repo;
 
@@ -25,6 +28,26 @@ pub fn get_projects() -> Vec<Repo> {
         )
         .map(|repo| repo.to_owned())
         .collect()
+}
+
+/// Clones a repo using `gh`, streaming its output to stdout. 
+///
+/// **Blocks execution until finished**
+///
+/// # Parameters
+///
+/// - `repo` The repo to clone
+pub fn clone_repo(repo: &Repo) -> io::Result<()> {
+    let clone_dir = dirs::home_dir()
+        .expect("couldn't get home dir")
+        .join(PROJECTS_DIR);
+    let mut command = Command::new("gh")
+        .current_dir(clone_dir)
+        .args(["repo", "clone", &repo.name()])
+        .stdout(Stdio::piped())
+        .spawn()?;
+    command.wait().expect("Failed to wait on clone");
+    Ok(())
 }
 
 /// Gets the projects currently in ~/Projects/
@@ -64,7 +87,7 @@ fn get_users_repos() -> Vec<Repo> {
 
     if let Some(output) = output {
         if String::from_utf8_lossy(&output.stderr).contains("error connecting") {
-            return vec![]
+            return vec![];
         }
 
         let repo_strings: Vec<String> = String::from_utf8_lossy(&output.stdout)

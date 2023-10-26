@@ -1,4 +1,6 @@
-use crate::repo::Repo;
+use std::io;
+
+use crate::{repo::Repo, tmuxinator_intergration::does_tmuxinator_project_exist};
 
 mod repo;
 
@@ -6,7 +8,7 @@ mod projects;
 
 mod tmuxinator_intergration;
 
-fn main() {
+fn main() -> io::Result<()> {
     let projects = projects::get_projects();
 
     let project = rust_fzf::select(
@@ -21,9 +23,16 @@ fn main() {
         .collect();
     let project = project.get(0).unwrap();
 
+    if !project.local() {
+        println!("Project is not local, cloning it to project folder\n");
+        projects::clone_repo(&project)?;
+    }
+
     println!(
         "{}, config? {}",
         project.name(),
-        tmuxinator_intergration::does_tmuxinator_project_exist(&project)
+        does_tmuxinator_project_exist(&project)
     );
+
+    Ok(())
 }
