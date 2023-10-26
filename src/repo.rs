@@ -3,10 +3,14 @@
 pub struct Repo {
     /// The name of the repo
     name: String,
-    /// The url to clone the repo with
-    url: String,
     /// Whether the project is local or not
     local: bool
+}
+
+impl PartialEq for Repo {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name()
+    }
 }
 
 impl Repo {
@@ -20,20 +24,14 @@ impl Repo {
     /// # Returns
     ///
     /// A Repo struct
-    pub fn new<T: Into<String>>(name: T, url: T) -> Self {
+    pub fn new<T: Into<String>>(name: T) -> Self {
         let name = name.into();
-        let url = format!("https://github.com/{}.git", url.into());
-        Self { name, url, local: false }
+        Self { name, local: false }
     }
 
     /// The name of the repo
     pub fn name(&self) -> String {
         self.name.clone()
-    }
-
-    /// The url to clone the repo with
-    pub fn url(&self) -> String {
-        self.url.clone()
     }
 
     pub fn local(&self) -> bool {
@@ -42,18 +40,5 @@ impl Repo {
 
     pub fn set_local(&mut self, value: bool) {
         self.local = value
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    /// Tests if the parsed URL is the same as the github clone url
-    fn parsed_url_same_as_github_url() {
-        let url = "danielronalds/workflow";
-        let repo = Repo::new("workflow", url);
-        assert_eq!(repo.url(), "https://github.com/danielronalds/workflow.git") // URL grabbed from github
     }
 }
