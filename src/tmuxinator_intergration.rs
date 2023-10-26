@@ -78,8 +78,6 @@ windows:
 ///
 /// Fails if there is not a tmuxinator config for it to use
 ///
-/// TODO: Create config if it doesn't exist
-///
 /// # Parameters
 ///
 /// - `terminal` The terminal emulator to use

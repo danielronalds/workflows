@@ -8,32 +8,35 @@ use std::process::{Child, ChildStdin, Command, Stdio};
 use crate::projects;
 use crate::repo::Repo;
 
-/// Run fzf to select a project
+/// Run fzf to select a project. If in delete mode, only local projects will be displayed
 ///
 /// # Parameters
 ///
-/// - `prompt` The prompt to display in the fzf menu
+/// - `prompt`      The prompt to display in the fzf menu
+/// - `delete_mode` Whether the selected project will be deleted or not
 ///
 /// # Returns
 ///
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
-pub fn run_fzf(prompt: &str) -> (String, Vec<Repo>) {
+pub fn run_fzf(prompt: &str, delete_mode: bool) -> (String, Vec<Repo>) {
     let local_projects = projects::get_local_projects();
 
     let (child, mut child_in) = run_fzf_with_local(
         &local_projects,
         vec!["--layout=reverse", &format!("--prompt={}", prompt)],
     );
+    let mut git_projects = vec![];
 
-    let git_projects = projects::get_users_repos(&local_projects);
-
-    let mut fzf_in = String::new();
-    for selection in &git_projects {
-        fzf_in.push_str(&selection.name());
-        fzf_in.push('\n');
+    if !delete_mode {
+        git_projects = projects::get_users_repos(&local_projects);
+        let mut fzf_in = String::new();
+        for selection in &git_projects {
+            fzf_in.push_str(&selection.name());
+            fzf_in.push('\n');
+        }
+        let _ = child_in.write_all(fzf_in.as_bytes());
     }
-    let _ = child_in.write_all(fzf_in.as_bytes());
 
     let output = child
         .wait_with_output()

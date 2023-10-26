@@ -1,4 +1,7 @@
-use std::io::{self};
+use std::{
+    env,
+    io::{self},
+};
 
 use fzf_intergration::run_fzf;
 
@@ -15,7 +18,14 @@ mod tmuxinator_intergration;
 const TERMINAL: &str = "kitty";
 
 fn main() -> io::Result<()> {
-    let (project, projects) = run_fzf("Open: ");
+    let args: Vec<String> = env::args().collect();
+
+    let delete_mode = args.contains(&String::from("--delete"));
+
+    let (project, projects) = run_fzf(match delete_mode {
+        true => "Delete: ",
+        false => "Open: ",
+    }, delete_mode);
 
     let selected_projects: Vec<Repo> = projects
         .iter()
