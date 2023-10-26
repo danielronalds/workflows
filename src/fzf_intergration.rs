@@ -1,6 +1,7 @@
-/// This module contains the code for the fzf intergration
-///
-/// Heavily based on the [rust_fzf library](https://crates.io/crates/rust_fzf)
+//! This module contains the code for the fzf intergration
+//!
+//! Heavily based on the [rust_fzf library](https://crates.io/crates/rust_fzf)
+
 use std::io::Write;
 use std::process::{Child, ChildStdin, Command, Stdio};
 
