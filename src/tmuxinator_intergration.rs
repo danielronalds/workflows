@@ -2,6 +2,8 @@ use std::{fs, io, path::PathBuf, process::Command};
 
 use crate::{projects, repo::Repo};
 
+const EDITOR: &str = "nvim";
+
 /// The path to the tmuxinator config directory
 ///
 /// # Returns
@@ -46,7 +48,7 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 /// # Parameters
 ///
 /// - `project` The project to create the config for
-pub fn create_tmuxinator_config(project: &Repo) -> io::Result<()> {
+pub fn create_tmuxinator_config(project: &Repo, editor: &str) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
     let config_path = tmuxinator_config_dir();
     let project_root = projects::get_project_root(project);
@@ -58,7 +60,7 @@ name: {}
 root: {}
 
 windows:
-  - editor: nvim .",
+  - editor: {} .",
         config_path
             .to_str()
             .expect("Failed to cast pathbuf to string"),
@@ -66,6 +68,7 @@ windows:
         project_root
             .to_str()
             .expect("Failed to cast pathbuf to string"),
+        editor
     );
 
     fs::write(config_path.join(config_filename), contents.trim())?;
@@ -85,7 +88,7 @@ windows:
 /// - `project`  The project to run
 pub fn run_tmuxinator(terminal: &str, project: &Repo) -> io::Result<()> {
     if !tmuxinator_project_exist(project) {
-        create_tmuxinator_config(project)?;
+        create_tmuxinator_config(project, EDITOR)?;
     }
 
     Command::new(terminal)
