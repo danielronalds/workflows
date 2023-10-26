@@ -7,20 +7,14 @@ use repo::Repo;
 fn main() {
     let git_repos = get_users_repos();
 
-    let projects = get_current_projects();
+    let projects = get_local_projects();
 
-    let local_projects: Vec<Repo> = git_repos
-        .iter()
-        .filter_map(|repo| {
-            if projects.contains(&repo.name()) {
-                return None;
-            }
-            Some(repo.to_owned())
-        })
-        .collect();
+    for mut repo in git_repos {
+        repo.set_local(projects.contains(&repo.name()));
 
-    for local_project in local_projects {
-        println!("{}", local_project.name());
+        if !repo.local() {
+            println!("{}", repo.name());
+        }
     }
 }
 
@@ -29,7 +23,7 @@ fn main() {
 /// # Returns
 ///
 /// A vec of strings containing the names of the directories in the project folder
-fn get_current_projects() -> Vec<String> {
+fn get_local_projects() -> Vec<String> {
     let entries = fs::read_dir("/home/danielr/Projects/").unwrap();
     let directories: Vec<String> = entries
         .filter_map(|file| {

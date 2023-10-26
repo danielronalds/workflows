@@ -5,6 +5,8 @@ pub struct Repo {
     name: String,
     /// The url to clone the repo with
     url: String,
+    /// Whether the project is local or not
+    local: bool
 }
 
 impl Repo {
@@ -21,7 +23,7 @@ impl Repo {
     pub fn new<T: Into<String>>(name: T, url: T) -> Self {
         let name = name.into();
         let url = format!("https://github.com/{}.git", url.into());
-        Self { name, url }
+        Self { name, url, local: false }
     }
 
     /// The name of the repo
@@ -32,6 +34,14 @@ impl Repo {
     /// The url to clone the repo with
     pub fn url(&self) -> String {
         self.url.clone()
+    }
+
+    pub fn local(&self) -> bool {
+        self.local
+    }
+
+    pub fn set_local(&mut self, value: bool) {
+        self.local = value
     }
 }
 
