@@ -62,7 +62,7 @@ pub fn get_local_projects() -> Vec<Repo> {
             path.file_name()?.to_str().map(|x| Repo::new(x, true))
         })
         .collect();
-    return local_repos;
+    local_repos
 }
 
 /// Gets the list of repos from the "gh repo list" command output, filtering out local projects

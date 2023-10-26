@@ -10,12 +10,10 @@ const EDITOR: &str = "nvim";
 ///
 /// A PathBuf leading to ~/.config/tmuxinator/
 fn tmuxinator_config_dir() -> PathBuf {
-    let tmuxinator_configs = dirs::home_dir()
+    dirs::home_dir()
         .expect("Unable to get home dir")
         .join(".config/")
-        .join("tmuxinator");
-
-    tmuxinator_configs
+        .join("tmuxinator")
 }
 
 /// Checks if the project already has a tmuxinator project
@@ -34,7 +32,7 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
         .expect("Failed to read directory")
         .filter_map(|file| {
             let filename = file.ok()?.file_name();
-            if filename.to_str()? == &config_filename {
+            if filename.to_str()? == config_filename {
                 return Some(filename);
             }
             None

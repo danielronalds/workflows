@@ -28,7 +28,7 @@ fn main() -> io::Result<()> {
             if !casual::confirm("Project is not local, clone it to ~/Projects/?") {
                 return Ok(());
             }
-            projects::clone_repo(&selected_project)?;
+            projects::clone_repo(selected_project)?;
         }
 
         run_tmuxinator(TERMINAL, selected_project)?;

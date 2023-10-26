@@ -38,13 +38,4 @@ impl Repo {
     pub fn local(&self) -> bool {
         self.local
     }
-
-    /// Sets whether the project is local or not
-    ///
-    /// # Parameters
-    ///
-    /// - `value` Whether the project is local or not
-    pub fn set_local(&mut self, value: bool) {
-        self.local = value
-    }
 }
