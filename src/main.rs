@@ -4,6 +4,8 @@ use std::process::Command;
 mod repo;
 use repo::Repo;
 
+const PROJECTS_DIR: &str = "Projects/";
+
 fn main() {
     let git_repos = get_users_repos();
 
@@ -12,7 +14,7 @@ fn main() {
     for mut repo in git_repos {
         repo.set_local(projects.contains(&repo.name()));
 
-        if !repo.local() {
+        if repo.local() {
             println!("{}", repo.name());
         }
     }
@@ -24,7 +26,9 @@ fn main() {
 ///
 /// A vec of strings containing the names of the directories in the project folder
 fn get_local_projects() -> Vec<String> {
-    let entries = fs::read_dir("/home/danielr/Projects/").unwrap();
+    let home = dirs::home_dir().expect("Couldn't load home directory!");
+    let entries = fs::read_dir(home.join(PROJECTS_DIR)).unwrap();
+
     let directories: Vec<String> = entries
         .filter_map(|file| {
             let path = file.ok()?.path();
