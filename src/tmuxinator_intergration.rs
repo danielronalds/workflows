@@ -1,4 +1,7 @@
-use std::fs;
+use std::{
+    fs,
+    process::{Command, Stdio}, io,
+};
 
 use crate::repo::Repo;
 
@@ -8,10 +11,10 @@ use crate::repo::Repo;
 ///
 /// - `project` The project to check for
 ///
-/// # Returns 
+/// # Returns
 ///
 /// `true` if <projectname>.yml exists in ~/.config/tmuxinator/
-pub fn does_tmuxinator_project_exist(project: &Repo) -> bool {
+fn tmuxinator_project_exist(project: &Repo) -> bool {
     let tmuxinator_configs = dirs::home_dir()
         .expect("Unable to get home dir")
         .join(".config/")
@@ -30,4 +33,26 @@ pub fn does_tmuxinator_project_exist(project: &Repo) -> bool {
         });
 
     configs.count() == 1
+}
+
+/// Attempts to run the selected project with tmuxinator
+///
+/// Fails if there is not a tmuxinator config for it to use
+///
+/// TODO: Create config if it doesn't exist
+///
+/// # Parameters
+///
+/// - `terminal` The terminal emulator to use
+/// - `project`  The project to run
+pub fn run_tmuxinator(terminal: &str, project: &Repo) -> io::Result<()> {
+    if !tmuxinator_project_exist(project) {
+        return Ok(());
+    }
+
+    Command::new(terminal)
+        .args(["tmuxinator","start", &project.name()])
+        .spawn()?;
+
+    Ok(())
 }

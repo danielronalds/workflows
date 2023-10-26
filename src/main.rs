@@ -1,12 +1,14 @@
 use std::io;
 
-use crate::{repo::Repo, tmuxinator_intergration::does_tmuxinator_project_exist};
+use crate::{repo::Repo, tmuxinator_intergration::run_tmuxinator};
 
 mod repo;
 
 mod projects;
 
 mod tmuxinator_intergration;
+
+const TERMINAL: &str = "kitty";
 
 fn main() -> io::Result<()> {
     let projects = projects::get_projects();
@@ -28,11 +30,7 @@ fn main() -> io::Result<()> {
         projects::clone_repo(&project)?;
     }
 
-    println!(
-        "{}, config? {}",
-        project.name(),
-        does_tmuxinator_project_exist(&project)
-    );
+    run_tmuxinator(TERMINAL, project)?;
 
     Ok(())
 }
