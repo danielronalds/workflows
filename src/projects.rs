@@ -8,23 +8,20 @@ use crate::repo::Repo;
 
 const PROJECTS_DIR: &str = "Projects/";
 
+/// Gets the root directory for the tmuxinator config
+///
+/// # Parameters
+///
+/// - `project` The repo to get the root directory for 
+///
+/// # Returns
+///
+/// A path buf to ~/Projects/<projectname>
 pub fn get_project_root(project: &Repo) -> PathBuf {
     dirs::home_dir()
         .expect("Couldn't get home directory")
         .join(PROJECTS_DIR)
         .join(format!("{}/", project.name()))
-}
-
-pub fn get_projects() -> Vec<Repo> {
-    let local_projects: Vec<Repo> = get_local_projects();
-
-    let github_projects = get_users_repos(&local_projects);
-
-    local_projects
-        .iter()
-        .chain(github_projects.iter())
-        .map(|repo| repo.to_owned())
-        .collect()
 }
 
 /// Clones a repo using `gh`, streaming its output to stdout.
