@@ -10,14 +10,21 @@ use crate::repo::Repo;
 
 /// Run fzf to select a project
 ///
+/// # Parameters
+///
+/// - `prompt` The prompt to display in the fzf menu
+///
 /// # Returns
 ///
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
-pub fn run_fzf() -> (String, Vec<Repo>) {
+pub fn run_fzf(prompt: &str) -> (String, Vec<Repo>) {
     let local_projects = projects::get_local_projects();
 
-    let (child, mut child_in) = run_fzf_with_local(&local_projects, vec!["--layout=reverse"]);
+    let (child, mut child_in) = run_fzf_with_local(
+        &local_projects,
+        vec!["--layout=reverse", &format!("--prompt={}", prompt)],
+    );
 
     let git_projects = projects::get_users_repos(&local_projects);
 
@@ -52,10 +59,7 @@ pub fn run_fzf() -> (String, Vec<Repo>) {
 /// # Returns
 ///
 /// The fzf proccess and its stdin for adding more projects
-fn run_fzf_with_local<T: ToString>(
-    local_projects: &[Repo],
-    args: Vec<T>,
-) -> (Child, ChildStdin) {
+fn run_fzf_with_local<T: ToString>(local_projects: &[Repo], args: Vec<T>) -> (Child, ChildStdin) {
     let mut child = Command::new("fzf")
         .args(args.iter().map(|x| x.to_string()))
         .stdin(Stdio::piped())

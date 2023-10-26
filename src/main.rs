@@ -15,7 +15,7 @@ mod tmuxinator_intergration;
 const TERMINAL: &str = "kitty";
 
 fn main() -> io::Result<()> {
-    let (project, projects) = run_fzf();
+    let (project, projects) = run_fzf("Open: ");
 
     let selected_projects: Vec<Repo> = projects
         .iter()
