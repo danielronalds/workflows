@@ -1,3 +1,4 @@
+#[derive(Clone)]
 /// This struct represents a github repo
 pub struct Repo {
     /// The name of the repo

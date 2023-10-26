@@ -1,3 +1,4 @@
+use std::fs;
 use std::process::Command;
 use std::process::Output;
 
@@ -5,11 +6,33 @@ mod repo;
 use repo::Repo;
 
 fn main() {
-    let output = get_repos_raw();
+    let git_repos = extract_repos(get_repos_raw());
 
-    for repo in extract_repos(output) {
-        println!("NAME: {}, \nURL: {}\n", repo.name(), repo.url());
+    let projects = get_current_projects();
+
+    let local_projects: Vec<Repo> = git_repos
+        .iter()
+        .filter(|x| projects.contains(&x.name()))
+        .map(|x| x.to_owned())
+        .collect();
+
+    for local_project in local_projects {
+        println!("{}", local_project.name());
     }
+}
+
+fn get_current_projects() -> Vec<String> {
+    let entries = fs::read_dir("/home/danielr/Projects/").unwrap();
+    let directories: Vec<String> = entries
+        .filter_map(|file| {
+            let path = file.ok()?.path();
+            if !path.is_dir() {
+                return None;
+            }
+            path.file_name()?.to_str().map(|x| x.to_owned())
+        })
+        .collect();
+    return directories;
 }
 
 /// Exectures the gh repo list command and returns the result as an option
