@@ -18,19 +18,20 @@ fn main() -> io::Result<()> {
         vec!["--layout=reverse".to_owned()],
     );
 
-    let project: Vec<Repo> = projects
+    let selected_projects: Vec<Repo> = projects
         .iter()
         .filter(|x| x.name() == project)
         .map(|x| x.to_owned())
         .collect();
-    let project = project.get(0).unwrap();
 
-    if !project.local() {
-        println!("Project is not local, cloning it to project folder\n");
-        projects::clone_repo(&project)?;
+    if let Some(selected_project) = selected_projects.get(0) {
+        if !selected_project.local() {
+            println!("Project is not local, cloning it to project folder\n");
+            projects::clone_repo(&selected_project)?;
+        }
+
+        run_tmuxinator(TERMINAL, selected_project)?;
     }
-
-    run_tmuxinator(TERMINAL, project)?;
 
     Ok(())
 }

@@ -30,7 +30,7 @@ pub fn get_projects() -> Vec<Repo> {
         .collect()
 }
 
-/// Clones a repo using `gh`, streaming its output to stdout. 
+/// Clones a repo using `gh`, streaming its output to stdout.
 ///
 /// **Blocks execution until finished**
 ///
@@ -78,10 +78,7 @@ fn get_local_projects() -> Vec<String> {
 /// A vec of repo structs
 fn get_users_repos() -> Vec<Repo> {
     let output = Command::new("gh")
-        .arg("repo")
-        .arg("list")
-        .arg("--limit")
-        .arg("1000")
+        .args(["repo", "list", "--limit", "1000"])
         .output()
         .ok();
 
