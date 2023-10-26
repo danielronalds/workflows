@@ -25,7 +25,9 @@ fn main() -> io::Result<()> {
 
     if let Some(selected_project) = selected_projects.get(0) {
         if !selected_project.local() {
-            println!("Project is not local, cloning it to project folder\n");
+            if !casual::confirm("Project is not local, clone it to ~/Projects/?") {
+                return Ok(());
+            }
             projects::clone_repo(&selected_project)?;
         }
 
