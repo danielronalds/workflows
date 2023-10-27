@@ -15,6 +15,8 @@ mod fzf_intergration;
 
 mod tmuxinator_intergration;
 
+mod git_intergration;
+
 const TERMINAL: &str = "kitty";
 
 fn main() -> io::Result<()> {
