@@ -4,6 +4,7 @@ use std::{
 };
 
 use fzf_intergration::run_fzf;
+use projects::delete_local_project;
 use tmuxinator_intergration::delete_tmuxinator;
 
 use crate::{repo::Repo, tmuxinator_intergration::run_tmuxinator};
@@ -41,8 +42,12 @@ fn main() -> io::Result<()> {
             if !casual::confirm("Are you sure everything is commited and pushed?") {
                 return Ok(());
             }
+            println!("Deleting tmuxinator config");
             delete_tmuxinator(selected_project)?;
+            println!("Deleting project from ~/Projects/");
+            delete_local_project(selected_project)?;
 
+            println!("Deleted {}!", selected_project.name());
             return Ok(());
         }
 

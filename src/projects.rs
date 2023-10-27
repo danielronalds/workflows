@@ -24,6 +24,16 @@ pub fn get_project_root(project: &Repo) -> PathBuf {
         .join(format!("{}/", project.name()))
 }
 
+/// Deletes a project from ~/Projects/
+///
+/// # Parameters
+///
+/// - `project` The project to delete
+pub fn delete_local_project(project: &Repo) -> io::Result<()> {
+    fs::remove_dir_all(get_project_root(project))?;
+    Ok(())
+}
+
 /// Clones a repo using `gh`, streaming its output to stdout.
 ///
 /// **Blocks execution until finished**
