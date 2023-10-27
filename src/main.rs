@@ -19,8 +19,6 @@ mod tmuxinator_intergration;
 
 mod git_intergration;
 
-const TERMINAL: &str = "kitty";
-
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
@@ -58,7 +56,7 @@ fn main() -> io::Result<()> {
             projects::clone_repo(selected_project)?;
         }
 
-        run_tmuxinator(TERMINAL, selected_project)?;
+        run_tmuxinator(selected_project)?;
     }
 
     Ok(())

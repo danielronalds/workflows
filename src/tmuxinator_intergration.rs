@@ -97,16 +97,18 @@ pub fn delete_tmuxinator(project: &Repo) -> io::Result<()> {
 ///
 /// # Parameters
 ///
-/// - `terminal` The terminal emulator to use
 /// - `project`  The project to run
-pub fn run_tmuxinator(terminal: &str, project: &Repo) -> io::Result<()> {
+pub fn run_tmuxinator(project: &Repo) -> io::Result<()> {
     if !tmuxinator_project_exist(project) {
         create_tmuxinator_config(project, EDITOR)?;
     }
 
-    Command::new(terminal)
-        .args(["tmuxinator", "start", &project.name()])
-        .spawn()?;
+    let command = format!("tmuxinator start {}", &project.name());
+
+    let _ = Command::new("sh")
+        .args(["-c", &command])
+        .spawn()?
+        .wait();
 
     Ok(())
 }
