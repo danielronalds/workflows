@@ -24,10 +24,13 @@ fn main() -> io::Result<()> {
 
     let delete_mode = args.contains(&String::from("--delete"));
 
-    let (project, projects) = run_fzf(match delete_mode {
-        true => "Delete: ",
-        false => "Open: ",
-    }, delete_mode);
+    let (project, projects) = run_fzf(
+        match delete_mode {
+            true => "Delete: ",
+            false => "Open: ",
+        },
+        delete_mode,
+    );
 
     let selected_projects: Vec<Repo> = projects
         .iter()
@@ -50,7 +53,12 @@ fn main() -> io::Result<()> {
         }
 
         if !selected_project.local() {
-            if !casual::confirm("Project is not local, clone it to ~/Projects/?") {
+            if !casual::prompt("Project is not local, clone it to ~/Projects/?")
+                .suffix(" [Y/n] ")
+                .default("y".to_string())
+                .matches(|s| matches!(&*s.trim().to_lowercase(), "n" | "no" | "y" | "yes"))
+                .map(|s| matches!(&*s.to_lowercase(), "y" | "yes"))
+            {
                 return Ok(());
             }
             projects::clone_repo(selected_project)?;
