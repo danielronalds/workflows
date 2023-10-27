@@ -74,6 +74,23 @@ windows:
     Ok(())
 }
 
+/// Deletes a tmuxinator config for a project
+///
+/// # Parameters
+///
+/// - `project` The project to delete
+pub fn delete_tmuxinator(project: &Repo) -> io::Result<()> {
+    if !tmuxinator_project_exist(project) {
+        return Ok(());
+    }
+
+    let config_filename = format!("{}.yml", project.name());
+
+    fs::remove_file(tmuxinator_config_dir().join(config_filename))?;
+
+    Ok(())
+}
+
 /// Attempts to run the selected project with tmuxinator
 ///
 /// Fails if there is not a tmuxinator config for it to use

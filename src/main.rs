@@ -4,6 +4,7 @@ use std::{
 };
 
 use fzf_intergration::run_fzf;
+use tmuxinator_intergration::delete_tmuxinator;
 
 use crate::{repo::Repo, tmuxinator_intergration::run_tmuxinator};
 
@@ -37,9 +38,11 @@ fn main() -> io::Result<()> {
 
     if let Some(selected_project) = selected_projects.get(0) {
         if delete_mode {
-            let clean_tree = git_intergration::repo_clean_tree(&selected_project)?;
-            let pushed = git_intergration::repo_pushed(&selected_project)?;
-            println!("Clean tree: {}\nPushed: {}", clean_tree, pushed);
+            if !casual::confirm("Are you sure everything is commited and pushed?") {
+                return Ok(());
+            }
+            delete_tmuxinator(selected_project)?;
+
             return Ok(());
         }
 
