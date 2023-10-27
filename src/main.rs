@@ -36,6 +36,13 @@ fn main() -> io::Result<()> {
         .collect();
 
     if let Some(selected_project) = selected_projects.get(0) {
+        if delete_mode {
+            let clean_tree = git_intergration::repo_clean_tree(&selected_project)?;
+            let pushed = git_intergration::repo_pushed(&selected_project)?;
+            println!("Clean tree: {}\nPushed: {}", clean_tree, pushed);
+            return Ok(());
+        }
+
         if !selected_project.local() {
             if !casual::confirm("Project is not local, clone it to ~/Projects/?") {
                 return Ok(());
