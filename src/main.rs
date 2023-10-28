@@ -57,11 +57,12 @@ fn main() -> io::Result<()> {
         }
 
         if !selected_project.local() {
-            if !casual::prompt("Project is not local, clone it to ~/Projects/?")
-                .suffix(" [Y/n] ")
-                .default("y".to_string())
-                .matches(|s| matches!(&*s.trim().to_lowercase(), "n" | "no" | "y" | "yes"))
-                .map(|s| matches!(&*s.to_lowercase(), "y" | "yes"))
+            if config.github().confirm_before_cloning()
+                && !casual::prompt("Project is not local, clone it to ~/Projects/?")
+                    .suffix(" [Y/n] ")
+                    .default("y".to_string())
+                    .matches(|s| matches!(&*s.trim().to_lowercase(), "n" | "no" | "y" | "yes"))
+                    .map(|s| matches!(&*s.to_lowercase(), "y" | "yes"))
             {
                 return Ok(());
             }
