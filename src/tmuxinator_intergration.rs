@@ -1,6 +1,6 @@
 use std::{fs, io, path::PathBuf, process::Command};
 
-use crate::{projects, repo::Repo};
+use crate::{config::WorkflowsConfig, projects, repo::Repo};
 
 const EDITOR: &str = "nvim";
 
@@ -46,7 +46,11 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 /// # Parameters
 ///
 /// - `project` The project to create the config for
-pub fn create_tmuxinator_config(project: &Repo, editor: &str) -> io::Result<()> {
+pub fn create_tmuxinator_config(
+    project: &Repo,
+    window_name: &str,
+    on_open: &str,
+) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
     let config_path = tmuxinator_config_dir();
     let project_root = projects::get_project_root(project);
@@ -58,7 +62,7 @@ name: {}
 root: {}
 
 windows:
-  - editor: {} .",
+  - {}: {}",
         config_path
             .to_str()
             .expect("Failed to cast pathbuf to string"),
@@ -66,7 +70,8 @@ windows:
         project_root
             .to_str()
             .expect("Failed to cast pathbuf to string"),
-        editor
+        window_name,
+        on_open
     );
 
     fs::write(config_path.join(config_filename), contents.trim())?;
@@ -98,17 +103,19 @@ pub fn delete_tmuxinator(project: &Repo) -> io::Result<()> {
 /// # Parameters
 ///
 /// - `project`  The project to run
-pub fn run_tmuxinator(project: &Repo) -> io::Result<()> {
+/// - `config`   The config of the program
+pub fn run_tmuxinator(project: &Repo, config: WorkflowsConfig) -> io::Result<()> {
     if !tmuxinator_project_exist(project) {
-        create_tmuxinator_config(project, EDITOR)?;
+        create_tmuxinator_config(
+            project,
+            &config.preferences().window_name(),
+            &config.preferences().on_open(),
+        )?;
     }
 
     let command = format!("tmuxinator start {}", &project.name());
 
-    let _ = Command::new("sh")
-        .args(["-c", &command])
-        .spawn()?
-        .wait();
+    let _ = Command::new("sh").args(["-c", &command]).spawn()?.wait();
 
     Ok(())
 }

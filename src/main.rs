@@ -19,8 +19,12 @@ mod tmuxinator_intergration;
 
 mod git_intergration;
 
+mod config;
+
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
+
+    let config = config::get_config();
 
     let delete_mode = args.contains(&String::from("--delete"));
 
@@ -64,7 +68,7 @@ fn main() -> io::Result<()> {
             projects::clone_repo(selected_project)?;
         }
 
-        run_tmuxinator(selected_project)?;
+        run_tmuxinator(selected_project, config)?;
     }
 
     Ok(())
