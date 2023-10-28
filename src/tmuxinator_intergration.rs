@@ -1,6 +1,8 @@
 use std::{fs, io, path::PathBuf, process::Command};
 
-use crate::{config::WorkflowsConfig, projects, repo::Repo};
+use crate::projects;
+use crate::repo::Repo;
+use crate::config::TmuxinatorConfig;
 
 /// The path to the tmuxinator config directory
 ///
@@ -48,8 +50,7 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 /// - `on_open`     The command to run on opening tmux
 pub fn create_tmuxinator_config(
     project: &Repo,
-    window_name: &str,
-    on_open: &str,
+    config: TmuxinatorConfig
 ) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
     let config_path = tmuxinator_config_dir();
@@ -70,8 +71,8 @@ windows:
         project_root
             .to_str()
             .expect("Failed to cast pathbuf to string"),
-        window_name,
-        on_open
+        config.window_name(),
+        config.on_open()
     );
 
     fs::write(config_path.join(config_filename), contents.trim())?;
@@ -103,13 +104,12 @@ pub fn delete_tmuxinator(project: &Repo) -> io::Result<()> {
 /// # Parameters
 ///
 /// - `project`  The project to run
-/// - `config`   The config of the program
-pub fn run_tmuxinator(project: &Repo, config: WorkflowsConfig) -> io::Result<()> {
+/// - `config`   The tmuxinator config of the program
+pub fn run_tmuxinator(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
     if !tmuxinator_project_exist(project) {
         create_tmuxinator_config(
             project,
-            &config.tmuxinator().window_name(),
-            &config.tmuxinator().on_open(),
+            config
         )?;
     }
 

@@ -25,7 +25,7 @@ fn get_config_option() -> Option<WorkflowsConfig> {
 #[derive(Deserialize, Default)]
 #[serde(default)]
 pub struct WorkflowsConfig {
-    tmuxinator: Option<Tmuxinator>,
+    tmuxinator: Option<TmuxinatorConfig>,
 }
 
 impl WorkflowsConfig {
@@ -36,22 +36,22 @@ impl WorkflowsConfig {
         toml::from_str(&toml_string).ok()
     }
 
-    /// Returns the [`Tmuxinator`] preferences in the config
-    pub fn tmuxinator(&self) -> Tmuxinator {
+    /// Returns the [`TmuxinatorConfig`] preferences in the config
+    pub fn tmuxinator_config(&self) -> TmuxinatorConfig {
         self.tmuxinator.clone().unwrap_or_default()
     }
 }
 
 #[derive(Deserialize, Default, Clone)]
 /// The Tmuxinator config options
-pub struct Tmuxinator {
+pub struct TmuxinatorConfig {
     /// The command to run on opening the tmuxinator session
     window_name: Option<String>,
     /// The name of the tmuxinator spawned window
     on_open: Option<String>,
 }
 
-impl Tmuxinator {
+impl TmuxinatorConfig {
     /// The command to run on opening the tmuxinator session
     pub fn on_open(&self) -> String {
         self.on_open.clone().unwrap_or("nvim .".to_string())

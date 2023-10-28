@@ -68,7 +68,7 @@ fn main() -> io::Result<()> {
             projects::clone_repo(selected_project)?;
         }
 
-        run_tmuxinator(selected_project, config)?;
+        run_tmuxinator(selected_project, config.tmuxinator_config())?;
     }
 
     Ok(())
