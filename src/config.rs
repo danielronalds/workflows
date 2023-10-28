@@ -11,7 +11,7 @@ use serde::Deserialize;
 ///
 /// The user's config or if any errors occurs, the default options
 pub fn get_config() -> WorkflowsConfig {
-    get_config_option().unwrap_or(WorkflowsConfig::default())
+    get_config_option().unwrap_or_default()
 }
 
 /// Attempt to read the config file located at ~/.config/workflows/config.toml
@@ -38,7 +38,7 @@ impl WorkflowsConfig {
 
     /// Returns the [`Tmuxinator`] preferences in the config
     pub fn tmuxinator(&self) -> Tmuxinator {
-        self.tmuxinator.clone().unwrap_or(Tmuxinator::default())
+        self.tmuxinator.clone().unwrap_or_default()
     }
 }
 

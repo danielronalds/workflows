@@ -2,6 +2,7 @@ use std::{io, process::Command};
 
 use crate::{projects, repo::Repo};
 
+#[allow(dead_code)]
 /// Checks if the repo has every commit pushed
 pub fn repo_pushed(repo: &Repo) -> io::Result<bool> {
     let repo_dir = projects::get_project_root(repo);
@@ -14,6 +15,7 @@ pub fn repo_pushed(repo: &Repo) -> io::Result<bool> {
     Ok(String::from_utf8_lossy(&output.stdout).contains("Everything up-to-date"))
 }
 
+#[allow(dead_code)]
 /// Checks if the repo has a clean working tree
 pub fn repo_clean_tree(repo: &Repo) -> io::Result<bool> {
     let repo_dir = projects::get_project_root(repo);

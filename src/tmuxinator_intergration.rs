@@ -2,8 +2,6 @@ use std::{fs, io, path::PathBuf, process::Command};
 
 use crate::{config::WorkflowsConfig, projects, repo::Repo};
 
-const EDITOR: &str = "nvim";
-
 /// The path to the tmuxinator config directory
 ///
 /// # Returns
