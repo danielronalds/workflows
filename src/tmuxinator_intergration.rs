@@ -45,7 +45,9 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 ///
 /// # Parameters
 ///
-/// - `project` The project to create the config for
+/// - `project`     The project to create the config for
+/// - `window_name` The name of the window created
+/// - `on_open`     The command to run on opening tmux
 pub fn create_tmuxinator_config(
     project: &Repo,
     window_name: &str,
@@ -108,8 +110,8 @@ pub fn run_tmuxinator(project: &Repo, config: WorkflowsConfig) -> io::Result<()>
     if !tmuxinator_project_exist(project) {
         create_tmuxinator_config(
             project,
-            &config.preferences().window_name(),
-            &config.preferences().on_open(),
+            &config.tmuxinator().window_name(),
+            &config.tmuxinator().on_open(),
         )?;
     }
 
