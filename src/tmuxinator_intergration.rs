@@ -1,8 +1,8 @@
 use std::{fs, io, path::PathBuf, process::Command};
 
+use crate::config::TmuxinatorConfig;
 use crate::projects;
 use crate::repo::Repo;
-use crate::config::TmuxinatorConfig;
 
 /// The path to the tmuxinator config directory
 ///
@@ -48,10 +48,7 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 /// - `project`     The project to create the config for
 /// - `window_name` The name of the window created
 /// - `on_open`     The command to run on opening tmux
-pub fn create_tmuxinator_config(
-    project: &Repo,
-    config: TmuxinatorConfig
-) -> io::Result<()> {
+pub fn create_tmuxinator_config(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
     let config_path = tmuxinator_config_dir();
     let project_root = projects::get_project_root(project);
@@ -106,11 +103,9 @@ pub fn delete_tmuxinator(project: &Repo) -> io::Result<()> {
 /// - `project`  The project to run
 /// - `config`   The tmuxinator config of the program
 pub fn run_tmuxinator(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
-    if !tmuxinator_project_exist(project) {
-        create_tmuxinator_config(
-            project,
-            config
-        )?;
+    // fresh_config() call going first as it's faster than checking if the project exists already
+    if config.fresh_config() || !tmuxinator_project_exist(project) {
+        create_tmuxinator_config(project, config)?;
     }
 
     let command = format!("tmuxinator start {}", &project.name());

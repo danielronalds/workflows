@@ -45,13 +45,28 @@ impl WorkflowsConfig {
 #[derive(Deserialize, Default, Clone)]
 /// The Tmuxinator config options
 pub struct TmuxinatorConfig {
+    /// Whether a new tmuxinator config should be generated every boot
+    ///
+    /// Default: false
+    fresh_config: Option<bool>,
+
     /// The command to run on opening the tmuxinator session
+    ///
+    /// Default: "editor"
     window_name: Option<String>,
+
     /// The name of the tmuxinator spawned window
+    ///
+    /// Default: "nvim ."
     on_open: Option<String>,
 }
 
 impl TmuxinatorConfig {
+    /// The name of the tmuxinator spawned window
+    pub fn fresh_config(&self) -> bool {
+        self.fresh_config.clone().unwrap_or(false)
+    }
+
     /// The command to run on opening the tmuxinator session
     pub fn on_open(&self) -> String {
         self.on_open.clone().unwrap_or("nvim .".to_string())
