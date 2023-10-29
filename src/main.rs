@@ -34,6 +34,7 @@ fn main() -> io::Result<()> {
             false => "Open: ",
         },
         delete_mode,
+        config.github()
     );
 
     let selected_projects: Vec<Repo> = projects
@@ -57,7 +58,7 @@ fn main() -> io::Result<()> {
         }
 
         if !selected_project.local() {
-            if config.github().confirm_before_cloning()
+            if config.github().confirm_cloning()
                 && !casual::prompt("Project is not local, clone it to ~/Projects/?")
                     .suffix(" [Y/n] ")
                     .default("y".to_string())
