@@ -34,6 +34,7 @@ fn main() -> io::Result<()> {
             false => "Open: ",
         },
         delete_mode,
+        config.fzf(),
         config.github()
     );
 

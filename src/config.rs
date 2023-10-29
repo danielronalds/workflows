@@ -10,6 +10,9 @@ use github::GithubConfig;
 pub mod tmuxinator;
 use tmuxinator::TmuxinatorConfig;
 
+pub mod fzf;
+use fzf::FzfConfig;
+
 /// Attempt to read the config file located at ~/.config/workflows/config.toml
 ///
 /// Wraps the get_config_option() function so that it always returns a config.
@@ -34,6 +37,7 @@ fn get_config_option() -> Option<WorkflowsConfig> {
 pub struct WorkflowsConfig {
     github: Option<GithubConfig>,
     tmuxinator: Option<TmuxinatorConfig>,
+    fzf: Option<FzfConfig>,
 }
 
 impl WorkflowsConfig {
@@ -42,6 +46,11 @@ impl WorkflowsConfig {
         let toml_string = fs::read_to_string(config_file).ok()?;
 
         toml::from_str(&toml_string).ok()
+    }
+
+    /// Returns the [`FzfConfig`] preferences in the config
+    pub fn fzf(&self) -> FzfConfig {
+        self.fzf.clone().unwrap_or_default()
     }
 
     /// Returns the [`GithubConfig`] settings in the config
