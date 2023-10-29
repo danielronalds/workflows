@@ -3,6 +3,13 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
+
+pub mod github;
+use github::GithubConfig;
+
+pub mod tmuxinator;
+use tmuxinator::TmuxinatorConfig;
+
 /// Attempt to read the config file located at ~/.config/workflows/config.toml
 ///
 /// Wraps the get_config_option() function so that it always returns a config.
@@ -37,7 +44,7 @@ impl WorkflowsConfig {
         toml::from_str(&toml_string).ok()
     }
 
-    /// Returns the [`GhConfig`] settings in the config
+    /// Returns the [`GithubConfig`] settings in the config
     pub fn github(&self) -> GithubConfig {
         self.github.clone().unwrap_or_default()
     }
@@ -48,73 +55,3 @@ impl WorkflowsConfig {
     }
 }
 
-#[derive(Deserialize, Default, Clone)]
-pub struct GithubConfig {
-    /// Whether github projects should be loaded
-    ///
-    /// Default: `true`
-    enabled: Option<bool>,
-
-    /// Whether to ask before cloning a github repo
-    ///
-    /// Default: `true`
-    confirm_cloning: Option<bool>,
-}
-
-impl GithubConfig {
-    /// Whether github projects should be loaded
-    ///
-    /// Default: `true`
-    pub fn enabled(&self) -> bool {
-        self.enabled.unwrap_or(true)
-    }
-
-    /// Whether to ask before cloning a github repo
-    ///
-    /// Default: `true`
-    pub fn confirm_cloning(&self) -> bool {
-        self.confirm_cloning.unwrap_or(true)
-    }
-}
-
-#[derive(Deserialize, Default, Clone)]
-/// The Tmuxinator config options
-pub struct TmuxinatorConfig {
-    /// Whether a new tmuxinator config should be generated every boot
-    ///
-    /// Default: `false`
-    fresh_config: Option<bool>,
-
-    /// The command to run on opening the tmuxinator session
-    ///
-    /// Default: `"editor"`
-    window_name: Option<String>,
-
-    /// The name of the tmuxinator spawned window
-    ///
-    /// Default: `"nvim ."`
-    on_open: Option<String>,
-}
-
-impl TmuxinatorConfig {
-    /// The name of the tmuxinator spawned window
-    ///
-    /// Default: `false`
-    pub fn fresh_config(&self) -> bool {
-        self.fresh_config.clone().unwrap_or(false)
-    }
-
-    /// The command to run on opening the tmuxinator session
-    ///
-    /// Default: `"editor"`
-    pub fn on_open(&self) -> String {
-        self.on_open.clone().unwrap_or("nvim .".to_string())
-    }
-
-    /// The name of the tmuxinator spawned window
-    ///
-    /// Default: `"nvim ."`
-    pub fn window_name(&self) -> String {
-        self.window_name.clone().unwrap_or("editor".to_string())
-    }
-}

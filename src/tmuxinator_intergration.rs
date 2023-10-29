@@ -1,6 +1,6 @@
 use std::{fs, io, path::PathBuf, process::Command};
 
-use crate::config::TmuxinatorConfig;
+use crate::config::tmuxinator::TmuxinatorConfig;
 use crate::projects;
 use crate::repo::Repo;
 

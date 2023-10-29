@@ -5,7 +5,7 @@
 use std::io::Write;
 use std::process::{Child, ChildStdin, Command, Stdio};
 
-use crate::config::GithubConfig;
+use crate::config::github::GithubConfig;
 use crate::projects;
 use crate::repo::Repo;
 
