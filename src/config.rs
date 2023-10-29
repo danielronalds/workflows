@@ -3,7 +3,6 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
-
 pub mod github;
 use github::GithubConfig;
 
@@ -13,7 +12,9 @@ use tmuxinator::TmuxinatorConfig;
 pub mod fzf;
 use fzf::FzfConfig;
 
-/// Attempt to read the config file located at ~/.config/workflows/config.toml
+/// Attempt to read the config file located at either of the following two paths:
+/// - ~/.config/workflows/config.toml
+/// - ~/.workflows.toml
 ///
 /// Wraps the get_config_option() function so that it always returns a config.
 ///
@@ -24,12 +25,21 @@ pub fn get_config() -> WorkflowsConfig {
     get_config_option().unwrap_or_default()
 }
 
-/// Attempt to read the config file located at ~/.config/workflows/config.toml
+/// Attempt to read the config file located at either of the following two paths:
+/// - ~/.config/workflows/config.toml
+/// - ~/.workflows.toml
 fn get_config_option() -> Option<WorkflowsConfig> {
     let config_dir = dirs::config_dir()?.join("workflows/");
-    let config_file = config_dir.join("config.toml");
+    let config_dir_file = config_dir.join("config.toml");
 
-    WorkflowsConfig::from(config_file)
+    if config_dir_file.is_file() {
+        return WorkflowsConfig::from(config_dir_file);
+    }
+
+    // If the config is not located in ~/.config/workflows/config.toml, then it might be in
+    // ~/.workflows.toml
+    let home_config_file = dirs::home_dir()?.join(".workflows.toml");
+    WorkflowsConfig::from(home_config_file)
 }
 
 #[derive(Deserialize, Default)]
@@ -63,4 +73,3 @@ impl WorkflowsConfig {
         self.tmuxinator.clone().unwrap_or_default()
     }
 }
-
