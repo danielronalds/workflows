@@ -1,17 +1,7 @@
-use std::{
-    env,
-    io::{self},
-};
-
-use local_projects::delete_local_project;
-
-use repo::Repo;
-
-use intergrations::tmuxinator::{delete_tmuxinator, run_tmuxinator};
-
-use intergrations::fzf::run_fzf;
+use std::{env, io};
 
 mod repo;
+use repo::Repo;
 
 mod local_projects;
 
@@ -28,14 +18,13 @@ fn main() -> io::Result<()> {
 
     let delete_mode = args.contains(&String::from("--delete"));
 
-    let (project, projects) = run_fzf(
+    let (project, projects) = intergrations::fzf::run_fzf(
         match delete_mode {
             true => "Delete: ",
             false => "Open: ",
         },
         delete_mode,
-        config.fzf(),
-        config.github(),
+        &config,
     );
 
     let selected_projects: Vec<Repo> = projects
@@ -50,9 +39,9 @@ fn main() -> io::Result<()> {
                 return Ok(());
             }
             println!("Deleting tmuxinator config");
-            delete_tmuxinator(selected_project)?;
+            intergrations::tmuxinator::delete_tmuxinator(selected_project)?;
             println!("Deleting project from ~/Projects/");
-            delete_local_project(selected_project)?;
+            local_projects::delete_local_project(selected_project)?;
 
             println!("Deleted {}!", selected_project.name());
             return Ok(());
@@ -71,7 +60,7 @@ fn main() -> io::Result<()> {
             intergrations::gh::clone_repo(selected_project)?;
         }
 
-        run_tmuxinator(selected_project, config.tmuxinator())?;
+        intergrations::tmuxinator::run_tmuxinator(selected_project, config.tmuxinator())?;
     }
 
     Ok(())

@@ -34,7 +34,7 @@ pub fn get_config() -> Option<WorkflowsConfig> {
 }
 
 /// This struct represents the user's configuration
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Clone)]
 #[serde(default)]
 pub struct WorkflowsConfig {
     github: Option<GithubConfig>,

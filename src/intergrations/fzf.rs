@@ -5,8 +5,7 @@
 use std::io::Write;
 use std::process::{Child, ChildStdin, Command, Stdio};
 
-use crate::config::fzf::FzfConfig;
-use crate::config::github::GithubConfig;
+use crate::config::WorkflowsConfig;
 use crate::intergrations;
 use crate::local_projects;
 use crate::repo::Repo;
@@ -17,8 +16,7 @@ use crate::repo::Repo;
 ///
 /// - `prompt`      The prompt to display in the fzf menu
 /// - `delete_mode` Whether the selected project will be deleted or not
-/// - `fzf_config`  The fzf config, used to determine fzf settings
-/// - `gh_config`   The github config, used to determine if github projects should be fetched
+/// - `config`      The users config
 ///
 /// # Returns
 ///
@@ -27,21 +25,20 @@ use crate::repo::Repo;
 pub fn run_fzf(
     prompt: &str,
     delete_mode: bool,
-    fzf_config: FzfConfig,
-    gh_config: GithubConfig,
+    config: &WorkflowsConfig,
 ) -> (String, Vec<Repo>) {
     let local_projects = local_projects::get_local_projects();
 
     let mut fzf_args = vec![];
     fzf_args.push(format!("--prompt={}", prompt));
-    if fzf_config.reverse_layout() {
+    if config.fzf().reverse_layout() {
         fzf_args.push("--layout=reverse".to_string());
     }
 
     let (child, mut child_in) = run_fzf_with_local(&local_projects, fzf_args);
     let mut git_projects = vec![];
 
-    if gh_config.enabled() && !delete_mode {
+    if config.github().enabled() && !delete_mode {
         git_projects = intergrations::gh::get_gh_repos(&local_projects);
         let mut fzf_in = String::new();
         for selection in &git_projects {
