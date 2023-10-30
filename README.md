@@ -31,15 +31,13 @@ however they are both enabled by default.
 Installing from cargo
 
 ```console
-cargo install --git https://github.com/danielronalds/workflows
+cargo install workflows
 ```
 
 Installing from source
 
 ```console
-git clone https://github.com/danielronalds/workflows
-cd workflows
-cargo install --path .
+cargo install --git https://github.com/danielronalds/workflows
 ```
 
 Building from source
