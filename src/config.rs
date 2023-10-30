@@ -16,19 +16,10 @@ use fzf::FzfConfig;
 /// - ~/.config/workflows/config.toml
 /// - ~/.workflows.toml
 ///
-/// Wraps the get_config_option() function so that it always returns a config.
-///
 /// # Returns
 ///
 /// The user's config or if any errors occurs, the default options
-pub fn get_config() -> WorkflowsConfig {
-    get_config_option().unwrap_or_default()
-}
-
-/// Attempt to read the config file located at either of the following two paths:
-/// - ~/.config/workflows/config.toml
-/// - ~/.workflows.toml
-fn get_config_option() -> Option<WorkflowsConfig> {
+pub fn get_config() -> Option<WorkflowsConfig> {
     let config_dir = dirs::config_dir()?.join("workflows/");
     let config_dir_file = config_dir.join("config.toml");
 
@@ -42,6 +33,7 @@ fn get_config_option() -> Option<WorkflowsConfig> {
     WorkflowsConfig::from(home_config_file)
 }
 
+/// This struct represents the user's configuration
 #[derive(Deserialize, Default)]
 #[serde(default)]
 pub struct WorkflowsConfig {

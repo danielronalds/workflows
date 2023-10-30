@@ -25,7 +25,7 @@ pub const PROJECTS_DIR: &str = "Projects/";
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
-    let config = config::get_config();
+    let config = config::get_config().unwrap_or_default();
 
     let delete_mode = args.contains(&String::from("--delete"));
 
