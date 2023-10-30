@@ -79,7 +79,7 @@ fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
         // Output the result depending on the status of the function return
         println!(
             "\r{}\n",
-            match intergrations::git::repo_pushed(&repo)? {
+            match intergrations::git::repo_pushed(repo)? {
                 PushedResult::Status(status) => format!(
                     "[{}] main pushed   ",
                     match status {
@@ -101,7 +101,7 @@ fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
         stdout().flush()?;
         println!(
             "\r[{}] clean working tree   \n",
-            match intergrations::git::repo_clean_tree(&repo)? {
+            match intergrations::git::repo_clean_tree(repo)? {
                 false => "⨯".bright_red().bold(),
                 true => "✓".bright_green().bold(),
             }
@@ -120,9 +120,9 @@ fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
         return Ok(());
     }
     println!("Deleting tmuxinator config");
-    intergrations::tmuxinator::delete_tmuxinator(&repo)?;
+    intergrations::tmuxinator::delete_tmuxinator(repo)?;
     println!("Deleting project from ~/Projects/");
-    local_projects::delete_local_project(&repo)?;
+    local_projects::delete_local_project(repo)?;
 
     println!("Deleted {}!", repo.name());
     Ok(())
