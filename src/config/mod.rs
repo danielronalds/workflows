@@ -16,24 +16,24 @@ pub mod git;
 use git::GitConfig;
 
 /// Attempt to read the config file located at either of the following two paths:
-/// - ~/.config/workflows/config.toml
+///
 /// - ~/.workflows.toml
+/// - ~/.config/workflows/config.toml
 ///
 /// # Returns
 ///
-/// The user's config or if any errors occurs, the default options
+/// `Some(WorkflowsConfig)` If one of the files was able to be read, otherwise `None`
 pub fn get_config() -> Option<WorkflowsConfig> {
-    let config_dir = dirs::config_dir()?.join("workflows/");
-    let config_dir_file = config_dir.join("config.toml");
-
-    if config_dir_file.is_file() {
-        return WorkflowsConfig::from(config_dir_file);
+    let home_config_file = dirs::home_dir()?.join(".workflows.toml");
+    if home_config_file.is_file() {
+        return WorkflowsConfig::from(home_config_file);
     }
 
-    // If the config is not located in ~/.config/workflows/config.toml, then it might be in
-    // ~/.workflows.toml
-    let home_config_file = dirs::home_dir()?.join(".workflows.toml");
-    WorkflowsConfig::from(home_config_file)
+    // If the config is not located in ~/.workflows.toml, then it might be in
+    // ~/.config/workflows/config.toml
+    let config_dir_file = dirs::config_dir()?.join("workflows/").join("config.toml");
+
+    WorkflowsConfig::from(config_dir_file)
 }
 
 /// This struct represents the user's configuration
