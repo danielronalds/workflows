@@ -61,7 +61,7 @@ impl WorkflowsConfig {
     }
 
     /// Returns the [`TmuxinatorConfig`] preferences in the config
-    pub fn tmuxinator_config(&self) -> TmuxinatorConfig {
+    pub fn tmuxinator(&self) -> TmuxinatorConfig {
         self.tmuxinator.clone().unwrap_or_default()
     }
 }

@@ -26,7 +26,7 @@ impl TmuxinatorConfig {
     ///
     /// Default: `false`
     pub fn fresh_config(&self) -> bool {
-        self.fresh_config.clone().unwrap_or(false)
+        self.fresh_config.unwrap_or(false)
     }
 
     /// The command to run on opening the tmuxinator session

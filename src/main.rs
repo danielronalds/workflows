@@ -71,7 +71,7 @@ fn main() -> io::Result<()> {
             intergrations::gh::clone_repo(selected_project)?;
         }
 
-        run_tmuxinator(selected_project, config.tmuxinator_config())?;
+        run_tmuxinator(selected_project, config.tmuxinator())?;
     }
 
     Ok(())
