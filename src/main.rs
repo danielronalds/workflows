@@ -6,6 +6,7 @@ use std::{
 use colored::Colorize;
 
 mod repo;
+use config::WorkflowsConfig;
 use repo::Repo;
 
 mod local_projects;
@@ -40,7 +41,7 @@ fn main() -> io::Result<()> {
 
     if let Some(selected_project) = selected_projects.get(0) {
         if delete_mode {
-            return delete_project(selected_project);
+            return delete_project(selected_project, config);
         }
 
         if !selected_project.local() {
@@ -66,34 +67,42 @@ fn main() -> io::Result<()> {
 ///
 /// # Parameters
 ///
-/// - `repo` The project to delete
-fn delete_project(repo: &Repo) -> io::Result<()> {
-    // Checking if the project has a clean work tree
-    print!("[{}] clean working tree...", "~".bright_yellow().bold());
-    stdout().flush()?;
-    println!(
-        "\r[{}] clean working tree   \n",
-        match intergrations::git::repo_clean_tree(&repo)? {
-            false => "⨯".bright_red().bold(),
-            true => "✓".bright_green().bold(),
-        }
-    );
+/// - `repo`   The project to delete
+/// - `config` The user's config
+fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
+    if config.git().check_tree() {
+        // Checking if the project has a clean work tree
+        print!("[{}] clean working tree...", "~".bright_yellow().bold());
+        stdout().flush()?;
+        println!(
+            "\r[{}] clean working tree   \n",
+            match intergrations::git::repo_clean_tree(&repo)? {
+                false => "⨯".bright_red().bold(),
+                true => "✓".bright_green().bold(),
+            }
+        );
+    }
 
-    // Checking if the project has been pushed
-    print!("[{}] main pushed...", "~".bright_yellow());
-    stdout().flush()?;
-    println!(
-        "\r[{}] main pushed   \n",
-        match intergrations::git::repo_pushed(&repo)? {
-            false => "⨯".bright_red().bold(),
-            true => "✓".bright_green().bold(),
-        }
-    );
+    if config.git().check_push() {
+        // Checking if the project has been pushed
+        print!("[{}] main pushed...", "~".bright_yellow());
+        stdout().flush()?;
+        println!(
+            "\r[{}] main pushed   \n",
+            match intergrations::git::repo_pushed(&repo)? {
+                false => "⨯".bright_red().bold(),
+                true => "✓".bright_green().bold(),
+            }
+        );
+    }
 
-    println!(
-        "{}: These checks are only for the main branch of the repo\n",
-        "NOTE".bright_red().bold()
-    );
+    if config.git().check_push() || config.git().check_tree() {
+        // Only displaying the check message if checks have been made
+        println!(
+            "{}: These checks are only for the main branch of the repo\n",
+            "NOTE".bright_red().bold()
+        );
+    }
 
     if !casual::confirm(format!("Delete {}?", repo.name())) {
         return Ok(());

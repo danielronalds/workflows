@@ -12,6 +12,9 @@ use tmuxinator::TmuxinatorConfig;
 pub mod fzf;
 use fzf::FzfConfig;
 
+pub mod git;
+use git::GitConfig;
+
 /// Attempt to read the config file located at either of the following two paths:
 /// - ~/.config/workflows/config.toml
 /// - ~/.workflows.toml
@@ -38,6 +41,7 @@ pub fn get_config() -> Option<WorkflowsConfig> {
 #[serde(default)]
 pub struct WorkflowsConfig {
     github: Option<GithubConfig>,
+    git: Option<GitConfig>,
     tmuxinator: Option<TmuxinatorConfig>,
     fzf: Option<FzfConfig>,
 }
@@ -53,6 +57,11 @@ impl WorkflowsConfig {
     /// Returns the [`FzfConfig`] preferences in the config
     pub fn fzf(&self) -> FzfConfig {
         self.fzf.clone().unwrap_or_default()
+    }
+
+    /// Returns the [`GitConfig`] preferences in the config
+    pub fn git(&self) -> GitConfig {
+        self.git.clone().unwrap_or_default()
     }
 
     /// Returns the [`GithubConfig`] settings in the config
