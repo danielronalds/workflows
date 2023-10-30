@@ -20,6 +20,8 @@ mod intergrations;
 
 mod config;
 
+pub const PROJECTS_DIR: &str = "Projects/";
+
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
@@ -67,7 +69,7 @@ fn main() -> io::Result<()> {
             {
                 return Ok(());
             }
-            projects::clone_repo(selected_project)?;
+            intergrations::gh_intergration::clone_repo(selected_project)?;
         }
 
         run_tmuxinator(selected_project, config.tmuxinator_config())?;

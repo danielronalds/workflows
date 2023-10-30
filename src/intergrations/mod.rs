@@ -2,9 +2,12 @@
 //!
 //! - `fzf`
 //! - `git`
+//! - `gh`
 //! - `tmux` & `tmuxinator`
 
 pub mod fzf_intergration;
+
+pub mod gh_intergration;
 
 pub mod tmuxinator_intergration;
 
