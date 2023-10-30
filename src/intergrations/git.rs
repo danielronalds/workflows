@@ -12,7 +12,7 @@ pub fn repo_pushed(repo: &Repo) -> io::Result<bool> {
         .args(["push", "-n"])
         .output()?;
 
-    Ok(String::from_utf8_lossy(&output.stdout).contains("Everything up-to-date"))
+    Ok(String::from_utf8_lossy(&output.stderr).contains("up-to-date"))
 }
 
 #[allow(dead_code)]

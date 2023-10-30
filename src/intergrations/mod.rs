@@ -11,4 +11,4 @@ pub mod gh;
 
 pub mod tmuxinator;
 
-mod git;
+pub mod git;

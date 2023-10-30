@@ -35,6 +35,7 @@ fn main() -> io::Result<()> {
 
     if let Some(selected_project) = selected_projects.get(0) {
         if delete_mode {
+            println!("Pushed: {}",  intergrations::git::repo_pushed(&selected_project)?);
             if !casual::confirm("Are you sure everything is commited and pushed?") {
                 return Ok(());
             }
