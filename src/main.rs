@@ -1,4 +1,9 @@
-use std::{env, io};
+use std::{
+    env,
+    io::{self, stdout, Write},
+};
+
+use colored::Colorize;
 
 mod repo;
 use repo::Repo;
@@ -35,17 +40,7 @@ fn main() -> io::Result<()> {
 
     if let Some(selected_project) = selected_projects.get(0) {
         if delete_mode {
-            println!("Pushed: {}",  intergrations::git::repo_pushed(&selected_project)?);
-            if !casual::confirm("Are you sure everything is commited and pushed?") {
-                return Ok(());
-            }
-            println!("Deleting tmuxinator config");
-            intergrations::tmuxinator::delete_tmuxinator(selected_project)?;
-            println!("Deleting project from ~/Projects/");
-            local_projects::delete_local_project(selected_project)?;
-
-            println!("Deleted {}!", selected_project.name());
-            return Ok(());
+            return delete_project(selected_project);
         }
 
         if !selected_project.local() {
@@ -64,5 +59,50 @@ fn main() -> io::Result<()> {
         intergrations::tmuxinator::run_tmuxinator(selected_project, config.tmuxinator())?;
     }
 
+    Ok(())
+}
+
+/// Deletes a project from ~/Projects/
+///
+/// # Parameters
+///
+/// - `repo` The project to delete
+fn delete_project(repo: &Repo) -> io::Result<()> {
+    // Checking if the project has a clean work tree
+    print!("[{}] clean working tree...", "~".bright_yellow().bold());
+    stdout().flush()?;
+    println!(
+        "\r[{}] clean working tree   \n",
+        match intergrations::git::repo_clean_tree(&repo)? {
+            false => "⨯".bright_red().bold(),
+            true => "✓".bright_green().bold(),
+        }
+    );
+
+    // Checking if the project has been pushed
+    print!("[{}] main pushed...", "~".bright_yellow());
+    stdout().flush()?;
+    println!(
+        "\r[{}] main pushed   \n",
+        match intergrations::git::repo_pushed(&repo)? {
+            false => "⨯".bright_red().bold(),
+            true => "✓".bright_green().bold(),
+        }
+    );
+
+    println!(
+        "{}: These checks are only for the main branch of the repo\n",
+        "NOTE".bright_red().bold()
+    );
+
+    if !casual::confirm(format!("Delete {}?", repo.name())) {
+        return Ok(());
+    }
+    println!("Deleting tmuxinator config");
+    intergrations::tmuxinator::delete_tmuxinator(&repo)?;
+    println!("Deleting project from ~/Projects/");
+    local_projects::delete_local_project(&repo)?;
+
+    println!("Deleted {}!", repo.name());
     Ok(())
 }
