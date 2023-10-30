@@ -3,21 +3,20 @@ use std::{
     io::{self},
 };
 
-use fzf_intergration::run_fzf;
 use projects::delete_local_project;
-use tmuxinator_intergration::delete_tmuxinator;
 
-use crate::{repo::Repo, tmuxinator_intergration::run_tmuxinator};
+use repo::Repo;
+
+use intergrations::tmuxinator_intergration::run_tmuxinator;
+use intergrations::tmuxinator_intergration::delete_tmuxinator;
+
+use intergrations::fzf_intergration::run_fzf;
 
 mod repo;
 
 mod projects;
 
-mod fzf_intergration;
-
-mod tmuxinator_intergration;
-
-mod git_intergration;
+mod intergrations;
 
 mod config;
 
