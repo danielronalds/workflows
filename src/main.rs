@@ -7,7 +7,7 @@ use local_projects::delete_local_project;
 
 use repo::Repo;
 
-use intergrations::tmuxinator::{run_tmuxinator, delete_tmuxinator};
+use intergrations::tmuxinator::{delete_tmuxinator, run_tmuxinator};
 
 use intergrations::fzf::run_fzf;
 
@@ -35,7 +35,7 @@ fn main() -> io::Result<()> {
         },
         delete_mode,
         config.fzf(),
-        config.github()
+        config.github(),
     );
 
     let selected_projects: Vec<Repo> = projects

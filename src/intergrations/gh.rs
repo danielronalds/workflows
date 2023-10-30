@@ -1,10 +1,10 @@
 //! This module contains the code for intergrating with the `gh` cli tool
 
-use std::process::{Stdio, Command};
 use std::io;
+use std::process::{Command, Stdio};
 
-use crate::PROJECTS_DIR;
 use crate::repo::Repo;
+use crate::PROJECTS_DIR;
 
 /// Clones a repo using `gh`, streaming its output to stdout.
 ///
@@ -25,7 +25,6 @@ pub fn clone_repo(repo: &Repo) -> io::Result<()> {
     command.wait().expect("Failed to wait on clone");
     Ok(())
 }
-
 
 /// Gets the list of repos from the "gh repo list" command output, filtering out local projects
 ///

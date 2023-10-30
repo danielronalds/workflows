@@ -7,9 +7,9 @@ use std::process::{Child, ChildStdin, Command, Stdio};
 
 use crate::config::fzf::FzfConfig;
 use crate::config::github::GithubConfig;
+use crate::intergrations;
 use crate::local_projects;
 use crate::repo::Repo;
-use crate::intergrations;
 
 /// Run fzf to select a project. If in delete mode, only local projects will be displayed
 ///
@@ -38,10 +38,7 @@ pub fn run_fzf(
         fzf_args.push("--layout=reverse".to_string());
     }
 
-    let (child, mut child_in) = run_fzf_with_local(
-        &local_projects,
-        fzf_args
-    );
+    let (child, mut child_in) = run_fzf_with_local(&local_projects, fzf_args);
     let mut git_projects = vec![];
 
     if gh_config.enabled() && !delete_mode {
