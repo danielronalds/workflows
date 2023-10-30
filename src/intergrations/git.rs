@@ -2,9 +2,16 @@ use std::{io, process::Command};
 
 use crate::repo::Repo;
 
-#[allow(dead_code)]
+/// Represents the possible outcomes of the repo_pushed() function
+pub enum PushedResult {
+    Status(bool),
+    NoConnection
+}
+
 /// Checks if the repo has every commit pushed
-pub fn repo_pushed(repo: &Repo) -> io::Result<bool> {
+///
+/// Always returns false if the user is not connected to the internet
+pub fn repo_pushed(repo: &Repo) -> io::Result<PushedResult> {
     let repo_dir = repo.get_project_root();
 
     let output = Command::new("git")
@@ -12,10 +19,14 @@ pub fn repo_pushed(repo: &Repo) -> io::Result<bool> {
         .args(["push", "-n"])
         .output()?;
 
-    Ok(String::from_utf8_lossy(&output.stderr).contains("up-to-date"))
+    // If there is no connection, return NoConnection
+    if String::from_utf8_lossy(&output.stderr).contains("fatal: Could not read from remote repo") {
+        return Ok(PushedResult::NoConnection);
+    }
+
+    Ok(PushedResult::Status(String::from_utf8_lossy(&output.stderr).contains("up-to-date")))
 }
 
-#[allow(dead_code)]
 /// Checks if the repo has a clean working tree
 pub fn repo_clean_tree(repo: &Repo) -> io::Result<bool> {
     let repo_dir = repo.get_project_root();

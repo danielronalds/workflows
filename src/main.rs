@@ -9,6 +9,8 @@ mod repo;
 use config::WorkflowsConfig;
 use repo::Repo;
 
+use crate::intergrations::git::PushedResult;
+
 mod local_projects;
 
 mod intergrations;
@@ -70,6 +72,29 @@ fn main() -> io::Result<()> {
 /// - `repo`   The project to delete
 /// - `config` The user's config
 fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
+    if config.git().check_push() {
+        // Checking if the project has been pushed
+        print!("[{}] main pushed...", "~".bright_yellow());
+        stdout().flush()?;
+        // Output the result depending on the status of the function return
+        println!(
+            "\r{}\n",
+            match intergrations::git::repo_pushed(&repo)? {
+                PushedResult::Status(status) => format!(
+                    "[{}] main pushed   ",
+                    match status {
+                        false => "⨯".bright_red().bold(),
+                        true => "✓".bright_green().bold(),
+                    }
+                ),
+                PushedResult::NoConnection => format!(
+                    "{}, cannot get push status",
+                    "No Connection".bright_red().bold()
+                ),
+            }
+        );
+    }
+
     if config.git().check_tree() {
         // Checking if the project has a clean work tree
         print!("[{}] clean working tree...", "~".bright_yellow().bold());
@@ -77,19 +102,6 @@ fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
         println!(
             "\r[{}] clean working tree   \n",
             match intergrations::git::repo_clean_tree(&repo)? {
-                false => "⨯".bright_red().bold(),
-                true => "✓".bright_green().bold(),
-            }
-        );
-    }
-
-    if config.git().check_push() {
-        // Checking if the project has been pushed
-        print!("[{}] main pushed...", "~".bright_yellow());
-        stdout().flush()?;
-        println!(
-            "\r[{}] main pushed   \n",
-            match intergrations::git::repo_pushed(&repo)? {
                 false => "⨯".bright_red().bold(),
                 true => "✓".bright_green().bold(),
             }
