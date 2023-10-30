@@ -1,10 +1,16 @@
+use std::path::PathBuf;
+
+use crate::PROJECTS_DIR;
+
 #[derive(Clone)]
-/// This struct represents a github repo
+/// This struct represents a project
+///
+/// Terminology used is `Repo` as in theory it's a git repo
 pub struct Repo {
     /// The name of the repo
     name: String,
     /// Whether the project is local or not
-    local: bool
+    local: bool,
 }
 
 impl PartialEq for Repo {
@@ -37,5 +43,17 @@ impl Repo {
     /// Whether the project already exists in ~/Projects
     pub fn local(&self) -> bool {
         self.local
+    }
+
+    /// Gets the root directory for the tmuxinator config
+    ///
+    /// # Returns
+    ///
+    /// A path buf to ~/Projects/<projectname>
+    pub fn get_project_root(&self) -> PathBuf {
+        dirs::home_dir()
+            .expect("Couldn't get home directory")
+            .join(PROJECTS_DIR)
+            .join(format!("{}/", self.name))
     }
 }

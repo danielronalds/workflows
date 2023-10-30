@@ -7,7 +7,7 @@ use std::process::{Child, ChildStdin, Command, Stdio};
 
 use crate::config::fzf::FzfConfig;
 use crate::config::github::GithubConfig;
-use crate::projects;
+use crate::local_projects;
 use crate::repo::Repo;
 
 use crate::intergrations::gh_intergration;
@@ -31,7 +31,7 @@ pub fn run_fzf(
     fzf_config: FzfConfig,
     gh_config: GithubConfig,
 ) -> (String, Vec<Repo>) {
-    let local_projects = projects::get_local_projects();
+    let local_projects = local_projects::get_local_projects();
 
     let mut fzf_args = vec![];
     fzf_args.push(format!("--prompt={}", prompt));

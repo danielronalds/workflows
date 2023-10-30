@@ -3,7 +3,7 @@ use std::{
     io::{self},
 };
 
-use projects::delete_local_project;
+use local_projects::delete_local_project;
 
 use repo::Repo;
 
@@ -14,7 +14,7 @@ use intergrations::fzf_intergration::run_fzf;
 
 mod repo;
 
-mod projects;
+mod local_projects;
 
 mod intergrations;
 

@@ -1,7 +1,6 @@
 use std::{fs, io, path::PathBuf, process::Command};
 
 use crate::config::tmuxinator::TmuxinatorConfig;
-use crate::projects;
 use crate::repo::Repo;
 
 /// The path to the tmuxinator config directory
@@ -51,7 +50,7 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 pub fn create_tmuxinator_config(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
     let config_path = tmuxinator_config_dir();
-    let project_root = projects::get_project_root(project);
+    let project_root = project.get_project_root();
     let contents = format!(
         "\
 # {}

@@ -1,23 +1,7 @@
-use std::{fs, io, path::PathBuf};
+use std::{fs, io};
 
 use crate::repo::Repo;
 use crate::PROJECTS_DIR;
-
-/// Gets the root directory for the tmuxinator config
-///
-/// # Parameters
-///
-/// - `project` The repo to get the root directory for
-///
-/// # Returns
-///
-/// A path buf to ~/Projects/<projectname>
-pub fn get_project_root(project: &Repo) -> PathBuf {
-    dirs::home_dir()
-        .expect("Couldn't get home directory")
-        .join(PROJECTS_DIR)
-        .join(format!("{}/", project.name()))
-}
 
 /// Deletes a project from ~/Projects/
 ///
@@ -25,7 +9,7 @@ pub fn get_project_root(project: &Repo) -> PathBuf {
 ///
 /// - `project` The project to delete
 pub fn delete_local_project(project: &Repo) -> io::Result<()> {
-    fs::remove_dir_all(get_project_root(project))?;
+    fs::remove_dir_all(project.get_project_root())?;
     Ok(())
 }
 
