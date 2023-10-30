@@ -24,7 +24,7 @@ fn main() -> io::Result<()> {
 
     let config = config::get_config().unwrap_or_default();
 
-    let delete_mode = args.contains(&String::from("--delete"));
+    let delete_mode = args.contains(&"--delete".to_string()) || args.contains(&"-d".to_string());
 
     let (project, projects) = intergrations::fzf::run_fzf(
         match delete_mode {
