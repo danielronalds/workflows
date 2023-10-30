@@ -5,10 +5,10 @@
 //! - `gh`
 //! - `tmux` & `tmuxinator`
 
-pub mod fzf_intergration;
+pub mod fzf;
 
-pub mod gh_intergration;
+pub mod gh;
 
-pub mod tmuxinator_intergration;
+pub mod tmuxinator;
 
-pub mod git_intergration;
+mod git;

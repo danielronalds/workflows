@@ -7,10 +7,9 @@ use local_projects::delete_local_project;
 
 use repo::Repo;
 
-use intergrations::tmuxinator_intergration::run_tmuxinator;
-use intergrations::tmuxinator_intergration::delete_tmuxinator;
+use intergrations::tmuxinator::{run_tmuxinator, delete_tmuxinator};
 
-use intergrations::fzf_intergration::run_fzf;
+use intergrations::fzf::run_fzf;
 
 mod repo;
 
@@ -69,7 +68,7 @@ fn main() -> io::Result<()> {
             {
                 return Ok(());
             }
-            intergrations::gh_intergration::clone_repo(selected_project)?;
+            intergrations::gh::clone_repo(selected_project)?;
         }
 
         run_tmuxinator(selected_project, config.tmuxinator_config())?;

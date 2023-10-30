@@ -9,8 +9,7 @@ use crate::config::fzf::FzfConfig;
 use crate::config::github::GithubConfig;
 use crate::local_projects;
 use crate::repo::Repo;
-
-use crate::intergrations::gh_intergration;
+use crate::intergrations;
 
 /// Run fzf to select a project. If in delete mode, only local projects will be displayed
 ///
@@ -46,7 +45,7 @@ pub fn run_fzf(
     let mut git_projects = vec![];
 
     if gh_config.enabled() && !delete_mode {
-        git_projects = gh_intergration::get_gh_repos(&local_projects);
+        git_projects = intergrations::gh::get_gh_repos(&local_projects);
         let mut fzf_in = String::new();
         for selection in &git_projects {
             fzf_in.push_str(&selection.name());
