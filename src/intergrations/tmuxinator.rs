@@ -7,7 +7,7 @@ use crate::repo::Repo;
 ///
 /// # Returns
 ///
-/// A PathBuf leading to ~/.config/tmuxinator/
+/// A [`PathBuf`] leading to ~/.config/tmuxinator/
 fn tmuxinator_config_dir() -> PathBuf {
     dirs::home_dir()
         .expect("Unable to get home dir")
@@ -45,8 +45,7 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 /// # Parameters
 ///
 /// - `project`     The project to create the config for
-/// - `window_name` The name of the window created
-/// - `on_open`     The command to run on opening tmux
+/// - `config`      The user's config
 pub fn create_tmuxinator_config(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
     let config_path = tmuxinator_config_dir();
