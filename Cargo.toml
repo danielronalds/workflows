@@ -18,3 +18,4 @@ colored = "2.0.4"
 dirs = "5.0.1"
 serde = { version = "1.0.190", features = ["derive"] }
 toml = "0.8.6"
+which = "5.0.0"

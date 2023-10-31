@@ -22,6 +22,10 @@ pub const PROJECTS_DIR: &str = "Projects/";
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
+    if args.contains(&"--health".to_string()) {
+        return health_check();
+    }
+
     let config = config::get_config().unwrap_or_default();
 
     let delete_mode = args.contains(&"--delete".to_string()) || args.contains(&"-d".to_string());
@@ -60,6 +64,36 @@ fn main() -> io::Result<()> {
         }
 
         intergrations::tmuxinator::run_tmuxinator(selected_project, config.tmuxinator())?;
+    }
+
+    Ok(())
+}
+
+/// Checks if the required programs are available on path
+fn health_check() -> io::Result<()> {
+    /// Checks for the passed in dependency to see if it's on the path
+    ///
+    /// # Parameters
+    ///
+    /// - `dependency` The program to check if its on the path
+    fn check_dependency_health(dependency: &str) -> io::Result<()> {
+        print!("[{}] {}", "~".bright_yellow(), dependency);
+        stdout().flush()?;
+        let path = which::which(dependency);
+        println!(
+            "\r[{}]",
+            match path {
+                Ok(_) => "✓".bright_green().bold(),
+                Err(_) => "⨯".bright_red().bold(),
+            }
+        );
+        Ok(())
+    }
+
+    let dependencies = ["fzf", "gh", "git", "tmux", "tmuxinator"];
+
+    for dependency in dependencies {
+        check_dependency_health(dependency)?;
     }
 
     Ok(())
