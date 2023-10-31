@@ -20,7 +20,13 @@ pub fn delete_local_project(project: &Repo) -> io::Result<()> {
 /// A vec of strings containing the names of the directories in the project folder
 pub fn get_local_projects() -> Vec<Repo> {
     let home = dirs::home_dir().expect("Couldn't load home directory!");
-    let entries = fs::read_dir(home.join(PROJECTS_DIR)).unwrap();
+    let entries = match fs::read_dir(home.join(PROJECTS_DIR)) {
+        Ok(entries) => entries,
+        Err(_) => {
+            fs::create_dir(home.join(PROJECTS_DIR)).expect("Failed to create Projects directory");
+            fs::read_dir(home.join(PROJECTS_DIR)).expect("Failed to read directroy")
+        }
+    };
 
     let local_repos: Vec<Repo> = entries
         .filter_map(|file| {
