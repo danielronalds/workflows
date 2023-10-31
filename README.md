@@ -26,6 +26,14 @@ Projects are selected using `fzf` for a fluent keyboard driven workflow.
 Both `gh` and `git` integration can be disabled via configuration,
 however they are both enabled by default.
 
+### Checking Requirements
+
+To check if the needed programs are installed, run workflows health check
+
+```console
+workflows --health
+```
+
 ## Installation
 
 Installing from cargo
