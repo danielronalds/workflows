@@ -34,6 +34,7 @@ pub fn run_fzf(
     if config.fzf().reverse_layout() {
         fzf_args.push("--layout=reverse".to_string());
     }
+    fzf_args.push("--color=16".into());
 
     let (child, mut child_in) = run_fzf_with_local(&local_projects, fzf_args);
     let mut git_projects = vec![];
