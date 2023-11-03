@@ -71,12 +71,9 @@ fn main() -> io::Result<()> {
 
 /// Checks if the required programs are available on path
 fn health_check() -> io::Result<()> {
-    /// Checks for the passed in dependency to see if it's on the path
-    ///
-    /// # Parameters
-    ///
-    /// - `dependency` The program to check if its on the path
-    fn check_dependency_health(dependency: &str) -> io::Result<()> {
+    let dependencies = ["fzf", "gh", "git", "tmux", "tmuxinator"];
+
+    for dependency in dependencies {
         print!("[{}] {}", "~".bright_yellow(), dependency);
         stdout().flush()?;
         let path = which::which(dependency);
@@ -87,13 +84,6 @@ fn health_check() -> io::Result<()> {
                 Err(_) => "⨯".bright_red().bold(),
             }
         );
-        Ok(())
-    }
-
-    let dependencies = ["fzf", "gh", "git", "tmux", "tmuxinator"];
-
-    for dependency in dependencies {
-        check_dependency_health(dependency)?;
     }
 
     Ok(())
