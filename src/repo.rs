@@ -57,3 +57,9 @@ impl Repo {
             .join(format!("{}/", self.name))
     }
 }
+
+impl Into<String> for Repo {
+    fn into(self) -> String {
+        self.name()
+    }
+}

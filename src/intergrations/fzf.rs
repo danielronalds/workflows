@@ -2,8 +2,7 @@
 //!
 //! Heavily based on the [rust_fzf library](https://crates.io/crates/rust_fzf)
 
-use std::io::Write;
-use std::process::{Child, ChildStdin, Command, Stdio};
+use fzf_wrapped::{Color, Fzf, Layout};
 
 use crate::config::WorkflowsConfig;
 use crate::intergrations;
@@ -22,38 +21,32 @@ use crate::repo::Repo;
 ///
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
-pub fn run_fzf(
-    prompt: &str,
-    delete_mode: bool,
-    config: &WorkflowsConfig,
-) -> (String, Vec<Repo>) {
-    let local_projects = local_projects::get_local_projects();
+pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (String, Vec<Repo>) {
+    let mut fzf_builder = Fzf::builder();
+    fzf_builder.prompt(prompt).color(Color::Sixteen).ansi(true);
 
-    let mut fzf_args = vec![];
-    fzf_args.push(format!("--prompt={}", prompt));
     if config.fzf().reverse_layout() {
-        fzf_args.push("--layout=reverse".to_string());
+        fzf_builder.layout(Layout::Reverse);
     }
-    fzf_args.push("--color=16".into());
 
-    let (child, mut child_in) = run_fzf_with_local(&local_projects, fzf_args);
+    let mut fzf = fzf_builder.build().unwrap();
+
+    fzf.run().expect("Failed to run fzf");
+
+    let local_projects = local_projects::get_local_projects();
+    fzf.add_items(local_projects.clone()).expect("Failed to add local repos");
+
     let mut git_projects = vec![];
-
     if config.github().enabled() && !delete_mode {
         git_projects = intergrations::gh::get_gh_repos(&local_projects);
-        let mut fzf_in = String::new();
-        for selection in &git_projects {
-            fzf_in.push_str(&selection.name());
-            fzf_in.push('\n');
-        }
-        let _ = child_in.write_all(fzf_in.as_bytes());
+        let _ = fzf.add_items(git_projects.clone()); // Ignoring output, as if the user selects a
+                                                     // project before this has loaded, then a
+                                                     // BrokenPipe error occurs because fzf has
+                                                     // closed... But we don't care about whether
+                                                     // this succeeds to not
     }
 
-    let output = child
-        .wait_with_output()
-        .expect("Failed to read fzf command stdout");
-
-    let project = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    let project = fzf.output().expect("Failed to get output");
 
     let projects: Vec<Repo> = local_projects
         .iter()
@@ -62,34 +55,4 @@ pub fn run_fzf(
         .collect();
 
     (project, projects)
-}
-
-/// Runs fzf with the local projects
-///
-/// # Parameters
-/// - `local_projects` The list of repos to run fzf with initially
-/// - `args`           The arguments to run fzf with
-///
-/// # Returns
-///
-/// The fzf proccess and its stdin for adding more projects
-fn run_fzf_with_local<T: ToString>(local_projects: &[Repo], args: Vec<T>) -> (Child, ChildStdin) {
-    let mut child = Command::new("fzf")
-        .args(args.iter().map(|x| x.to_string()))
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()
-        .expect("Failed to spawn child process");
-
-    let mut stdin = child.stdin.take().expect("Failed to open stdin");
-    let mut fzf_in = String::new();
-    for selection in local_projects {
-        fzf_in.push_str(&selection.name());
-        fzf_in.push('\n');
-    }
-    stdin
-        .write_all(fzf_in.as_bytes())
-        .expect("Failed to write fzf_input to fzf command stdin");
-
-    (child, stdin)
 }
