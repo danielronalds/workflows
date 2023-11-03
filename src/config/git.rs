@@ -7,9 +7,8 @@ pub struct GitConfig {
     /// Whether to check for a clean work tree in the repo before deleting
     check_tree: Option<bool>,
 
-
     /// Whether to check the push status of the repo  before deleting
-    check_push: Option<bool>
+    check_push: Option<bool>,
 }
 
 impl GitConfig {

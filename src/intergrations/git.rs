@@ -5,7 +5,7 @@ use crate::repo::Repo;
 /// Represents the possible outcomes of the repo_pushed() function
 pub enum PushedResult {
     Status(bool),
-    NoConnection
+    NoConnection,
 }
 
 /// Checks if the repo has every commit pushed
@@ -24,7 +24,9 @@ pub fn repo_pushed(repo: &Repo) -> io::Result<PushedResult> {
         return Ok(PushedResult::NoConnection);
     }
 
-    Ok(PushedResult::Status(String::from_utf8_lossy(&output.stderr).contains("up-to-date")))
+    Ok(PushedResult::Status(
+        String::from_utf8_lossy(&output.stderr).contains("up-to-date"),
+    ))
 }
 
 /// Checks if the repo has a clean working tree

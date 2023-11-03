@@ -34,7 +34,8 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
     fzf.run().expect("Failed to run fzf");
 
     let local_projects = local_projects::get_local_projects();
-    fzf.add_items(local_projects.clone()).expect("Failed to add local repos");
+    fzf.add_items(local_projects.clone())
+        .expect("Failed to add local repos");
 
     let mut git_projects = vec![];
     if config.github().enabled() && !delete_mode {
