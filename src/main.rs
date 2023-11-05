@@ -26,6 +26,11 @@ fn main() -> io::Result<()> {
         return health_check();
     }
 
+    if args.contains(&"--version".to_string()) {
+        println!("workflows v{}", env!("CARGO_PKG_VERSION"));
+        return Ok(())
+    }
+
     let config = config::get_config().unwrap_or_default();
 
     let delete_mode = args.contains(&"--delete".to_string()) || args.contains(&"-d".to_string());
