@@ -2,7 +2,7 @@
 
 use serde::Deserialize;
 
-#[derive(Deserialize, Default, Clone)]
+#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 /// The Tmuxinator config options
 pub struct TmuxinatorConfig {
     /// Whether a new tmuxinator config should be generated every boot

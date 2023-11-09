@@ -2,7 +2,7 @@
 
 use serde::Deserialize;
 
-#[derive(Deserialize, Default, Clone)]
+#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct GitConfig {
     /// Whether to check for a clean work tree in the repo before deleting
     check_tree: Option<bool>,

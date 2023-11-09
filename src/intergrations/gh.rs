@@ -4,7 +4,6 @@ use std::io;
 use std::process::{Command, Stdio};
 
 use crate::repo::Repo;
-use crate::PROJECTS_DIR;
 
 /// Clones a repo using `gh`, streaming its output to stdout.
 ///
@@ -12,11 +11,12 @@ use crate::PROJECTS_DIR;
 ///
 /// # Parameters
 ///
-/// - `repo` The repo to clone
-pub fn clone_repo(repo: &Repo) -> io::Result<()> {
+/// - `repo`        The repo to clone
+/// - `project_dir` The directory to clone the project to
+pub fn clone_repo(repo: &Repo, project_dir: String) -> io::Result<()> {
     let clone_dir = dirs::home_dir()
         .expect("couldn't get home dir")
-        .join(PROJECTS_DIR);
+        .join(project_dir);
     let mut command = Command::new("gh")
         .current_dir(clone_dir)
         .args(["repo", "clone", &repo.name()])
@@ -31,11 +31,12 @@ pub fn clone_repo(repo: &Repo) -> io::Result<()> {
 /// # Parameters
 ///
 /// - `local_projects` Repo structs to filter out
+/// - `project_dir`    The path to the directory containing the local projects
 ///
 /// # Returns
 ///
 /// A vec of repo structs
-pub fn get_gh_repos(local_projects: &[Repo]) -> Vec<Repo> {
+pub fn get_gh_repos(local_projects: &[Repo], project_dir: String) -> Vec<Repo> {
     let output = Command::new("gh")
         .args(["repo", "list", "--limit", "1000"])
         .output()
@@ -56,7 +57,7 @@ pub fn get_gh_repos(local_projects: &[Repo]) -> Vec<Repo> {
             .iter()
             .filter_map(|repo_string| {
                 let name = repo_string.split('/').nth(1);
-                name.map(|name| Repo::new(name, false))
+                name.map(|name| Repo::new(name, false, &project_dir))
             })
             .filter(|repo| !repo.name().is_empty() && !local_projects.contains(repo))
             .collect();

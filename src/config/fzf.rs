@@ -2,7 +2,7 @@
 
 use serde::Deserialize;
 
-#[derive(Deserialize, Default, Clone)]
+#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
     /// Whether fzf should have the reverse layout
     ///

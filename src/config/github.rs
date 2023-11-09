@@ -2,7 +2,7 @@
 
 use serde::Deserialize;
 
-#[derive(Deserialize, Default, Clone)]
+#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct GithubConfig {
     /// Whether github projects should be loaded
     ///

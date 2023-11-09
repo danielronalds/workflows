@@ -3,6 +3,9 @@ use std::path::PathBuf;
 
 use serde::Deserialize;
 
+pub mod general;
+use general::GeneralConfig;
+
 pub mod github;
 use github::GithubConfig;
 
@@ -37,9 +40,10 @@ pub fn get_config() -> Option<WorkflowsConfig> {
 }
 
 /// This struct represents the user's configuration
-#[derive(Deserialize, Default, Clone)]
+#[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 #[serde(default)]
 pub struct WorkflowsConfig {
+    general: Option<GeneralConfig>,
     github: Option<GithubConfig>,
     git: Option<GitConfig>,
     tmuxinator: Option<TmuxinatorConfig>,
@@ -48,10 +52,16 @@ pub struct WorkflowsConfig {
 
 impl WorkflowsConfig {
     /// Reads the passed in file and attempts to parse a [`WorkflowsConfig`] using toml
+    // FIX: implement the try_from trait instead
     fn from(config_file: PathBuf) -> Option<Self> {
         let toml_string = fs::read_to_string(config_file).ok()?;
 
         toml::from_str(&toml_string).ok()
+    }
+
+    /// Returns the [`GeneralConfig`] preferences in the config
+    pub fn general(&self) -> GeneralConfig {
+        self.general.clone().unwrap_or_default()
     }
 
     /// Returns the [`FzfConfig`] preferences in the config

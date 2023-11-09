@@ -1,7 +1,5 @@
 use std::path::PathBuf;
 
-use crate::PROJECTS_DIR;
-
 #[derive(Clone)]
 /// This struct represents a project
 ///
@@ -11,6 +9,8 @@ pub struct Repo {
     name: String,
     /// Whether the project is local or not
     local: bool,
+    /// The path to the projects directory
+    project_dir: String,
 }
 
 impl PartialEq for Repo {
@@ -24,15 +24,21 @@ impl Repo {
     ///
     /// # Arguments
     ///
-    /// - `name`   The name of the repo
-    /// - `local`  Whether the projects exists in ~/Projects/
+    /// - `name`        The name of the repo
+    /// - `local`       Whether the projects exists in defined local repo
+    /// - `project_dir` The path to the directory containing the projects
     ///
     /// # Returns
     ///
     /// A Repo struct
-    pub fn new<T: Into<String>>(name: T, local: bool) -> Self {
+    pub fn new<T: Into<String>>(name: T, local: bool, project_dir: T) -> Self {
         let name = name.into();
-        Self { name, local }
+        let project_dir = project_dir.into();
+        Self {
+            name,
+            local,
+            project_dir,
+        }
     }
 
     /// The name of the repo
@@ -49,11 +55,11 @@ impl Repo {
     ///
     /// # Returns
     ///
-    /// A path buf to ~/Projects/<projectname>
+    /// A path buf to ~/<project_dir>/<projectname>
     pub fn get_project_root(&self) -> PathBuf {
         dirs::home_dir()
             .expect("Couldn't get home directory")
-            .join(PROJECTS_DIR)
+            .join(self.project_dir.as_str())
             .join(format!("{}/", self.name))
     }
 }

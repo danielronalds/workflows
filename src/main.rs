@@ -17,9 +17,6 @@ mod intergrations;
 
 mod config;
 
-/// TODO: Make this path configurable via the user's config
-pub const PROJECTS_DIR: &str = "Projects/";
-
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
@@ -66,7 +63,7 @@ fn main() -> io::Result<()> {
             {
                 return Ok(());
             }
-            intergrations::gh::clone_repo(selected_project)?;
+            intergrations::gh::clone_repo(selected_project, config.general().projects_dir())?;
         }
 
         intergrations::tmuxinator::run_tmuxinator(selected_project, config.tmuxinator())?;

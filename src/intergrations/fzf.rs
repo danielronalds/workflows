@@ -35,13 +35,14 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
 
     // NOTE: Experiment with colours for local projects and git projects
 
-    let local_projects = local_projects::get_local_projects();
+    let local_projects = local_projects::get_local_projects(config.general().projects_dir());
     fzf.add_items(local_projects.clone())
         .expect("Failed to add local repos");
 
     let mut git_projects = vec![];
     if config.github().enabled() && !delete_mode {
-        git_projects = intergrations::gh::get_gh_repos(&local_projects);
+        git_projects =
+            intergrations::gh::get_gh_repos(&local_projects, config.general().projects_dir());
         let _ = fzf.add_items(git_projects.clone()); // Ignoring output, as if the user selects a
                                                      // project before this has loaded, then a
                                                      // BrokenPipe error occurs because fzf has
