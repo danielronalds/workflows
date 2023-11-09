@@ -44,9 +44,13 @@ pub fn get_config() -> Option<WorkflowsConfig> {
 #[serde(default)]
 pub struct WorkflowsConfig {
     general: Option<GeneralConfig>,
+    // TODO: Add tests for GithubConfig
     github: Option<GithubConfig>,
+    // TODO: Add tests for GitConfig
     git: Option<GitConfig>,
+    // TODO: Add tests for TmuxinatorConfig
     tmuxinator: Option<TmuxinatorConfig>,
+    // TODO: Add tests for FzfConfig
     fzf: Option<FzfConfig>,
 }
 
