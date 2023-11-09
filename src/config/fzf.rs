@@ -7,7 +7,8 @@ pub struct FzfConfig {
     /// Whether fzf should have the reverse layout
     ///
     /// Default: `true`
-    reverse_layout: Option<bool>,
+    reverse_layout: Option<bool>, // TODO: Allows user's to choose from any of the three fzf
+                                  // layouts by passing in a string
 }
 
 impl FzfConfig {

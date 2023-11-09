@@ -33,6 +33,8 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
 
     fzf.run().expect("Failed to run fzf");
 
+    // NOTE: Experiment with colours for local projects and git projects
+
     let local_projects = local_projects::get_local_projects();
     fzf.add_items(local_projects.clone())
         .expect("Failed to add local repos");

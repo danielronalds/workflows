@@ -17,6 +17,7 @@ mod intergrations;
 
 mod config;
 
+/// TODO: Make this path configurable via the user's config
 pub const PROJECTS_DIR: &str = "Projects/";
 
 fn main() -> io::Result<()> {
@@ -28,7 +29,7 @@ fn main() -> io::Result<()> {
 
     if args.contains(&"--version".to_string()) {
         println!("workflows v{}", env!("CARGO_PKG_VERSION"));
-        return Ok(())
+        return Ok(());
     }
 
     let config = config::get_config().unwrap_or_default();

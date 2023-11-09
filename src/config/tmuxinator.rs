@@ -10,6 +10,7 @@ pub struct TmuxinatorConfig {
     /// Default: `false`
     fresh_config: Option<bool>,
 
+    // TODO: Allows user's to configure multiple windows via the configuration
     /// The command to run on opening the tmuxinator session
     ///
     /// Default: `"editor"`
