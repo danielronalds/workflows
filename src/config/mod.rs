@@ -50,7 +50,6 @@ pub struct WorkflowsConfig {
     git: Option<GitConfig>,
     // TODO: Add tests for TmuxinatorConfig
     tmuxinator: Option<TmuxinatorConfig>,
-    // TODO: Add tests for FzfConfig
     fzf: Option<FzfConfig>,
 }
 

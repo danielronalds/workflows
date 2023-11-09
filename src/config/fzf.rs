@@ -24,7 +24,7 @@ impl FzfConfig {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{WorkflowsConfig, fzf::DEFAULT_REVERSE_LAYOUT};
+    use crate::config::{fzf::DEFAULT_REVERSE_LAYOUT, WorkflowsConfig};
 
     #[test]
     fn reverse_layout_dir_works() {
@@ -47,9 +47,6 @@ reverse_layout = true";
 
         assert_eq!(config.fzf.clone().unwrap().reverse_layout, None);
 
-        assert_eq!(
-            config.fzf().reverse_layout(),
-            DEFAULT_REVERSE_LAYOUT
-        )
+        assert_eq!(config.fzf().reverse_layout(), DEFAULT_REVERSE_LAYOUT)
     }
 }
