@@ -29,14 +29,14 @@ use git::GitConfig;
 pub fn get_config() -> Option<WorkflowsConfig> {
     let home_config_file = dirs::home_dir()?.join(".workflows.toml");
     if home_config_file.is_file() {
-        return WorkflowsConfig::from(home_config_file);
+        return WorkflowsConfig::try_from(home_config_file).ok();
     }
 
     // If the config is not located in ~/.workflows.toml, then it might be in
     // ~/.config/workflows/config.toml
     let config_dir_file = dirs::config_dir()?.join("workflows/").join("config.toml");
 
-    WorkflowsConfig::from(config_dir_file)
+    WorkflowsConfig::try_from(config_dir_file).ok()
 }
 
 /// This struct represents the user's configuration
@@ -54,14 +54,6 @@ pub struct WorkflowsConfig {
 }
 
 impl WorkflowsConfig {
-    /// Reads the passed in file and attempts to parse a [`WorkflowsConfig`] using toml
-    // FIX: implement the try_from trait instead
-    fn from(config_file: PathBuf) -> Option<Self> {
-        let toml_string = fs::read_to_string(config_file).ok()?;
-
-        toml::from_str(&toml_string).ok()
-    }
-
     /// Returns the [`GeneralConfig`] preferences in the config
     pub fn general(&self) -> GeneralConfig {
         self.general.clone().unwrap_or_default()
@@ -85,5 +77,21 @@ impl WorkflowsConfig {
     /// Returns the [`TmuxinatorConfig`] preferences in the config
     pub fn tmuxinator(&self) -> TmuxinatorConfig {
         self.tmuxinator.clone().unwrap_or_default()
+    }
+}
+
+impl TryFrom<PathBuf> for WorkflowsConfig {
+    type Error = &'static str;
+
+    fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
+        let toml_string = match fs::read_to_string(value) {
+            Ok(toml) => toml,
+            Err(_) => return Err("Couldn't read string")
+        };
+
+        match toml::from_str(&toml_string) {
+            Ok(config) => Ok(config),
+            Err(_) => Err("Couldn't parse config from toml")
+        }
     }
 }
