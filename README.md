@@ -99,6 +99,9 @@ default configuration is used
 ### Default Configuration
 
 ```toml
+[general]
+programs_dir="Projects/"
+
 [fzf]
 reverse_layout=true
 
@@ -115,6 +118,12 @@ fresh_config=false
 on_open="nvim ."
 window_name="editor"
 ```
+
+### General configuration
+
+| Option | Purpose | Default Value |
+| ------ | ------- | ------------- |
+| `projects_dir` | Where `workflows` should look for projects. Path is relative to $HOME | `"Projects/"` |
 
 ### fzf configuration
 
