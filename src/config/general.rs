@@ -35,7 +35,11 @@ projects_dir = 'Testing'";
 
     #[test]
     fn default_projects_dir_works() {
-        let config: WorkflowsConfig = toml::from_str("").expect("Failed to unwrap toml");
+        let toml = "[general]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(config.general.clone().unwrap().projects_dir, None);
 
         assert_eq!(
             config.general().projects_dir(),
