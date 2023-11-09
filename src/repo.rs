@@ -64,8 +64,8 @@ impl Repo {
     }
 }
 
-impl Into<String> for Repo {
-    fn into(self) -> String {
-        self.name()
+impl From<Repo> for String {
+    fn from(value: Repo) -> Self {
+        value.name()
     }
 }
