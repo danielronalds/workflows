@@ -17,6 +17,9 @@ mod intergrations;
 
 mod config;
 
+// TODO: Add --new command for creating a new workspace
+// TODO: Add --generate-config flag for creating a default configuration
+
 fn main() -> io::Result<()> {
     let args: Vec<String> = env::args().collect();
 
