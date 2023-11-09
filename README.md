@@ -1,6 +1,6 @@
 # Workflows
 
-A cli tool for creating a seemless workflow with remote and local
+A CLI tool for creating a seamless workflow with remote and local
 git repos.
 
 `workflows` allows users to view projects on their GitHub and their
@@ -61,16 +61,17 @@ cargo build --release
 ### Opening a project
 
 To open a project, open a terminal and run `workflows`. You'll be
-greeted with a `fzf` ui with your list of projects. Local projects
+greeted with a `fzf` UI with your list of projects. Local projects
 will be displayed instantly, however GitHub projects may take a 
 second to load in depending on your connection strength. Select 
 the project you'd like to open, and it'll be launched in a tmux 
 session. If a tmuxinator config doesn't exist for the project, 
 one will be created.
 
-Projects are stored in `~/Projects/`. This is also where GitHub 
-projects are cloned to. If a project exists elsewhere on your 
-system it won't be detected.
+Projects are stored in `~/Projects/` by default, however this can be
+changed via the configuration file. This is also where GitHub projects
+are cloned to. If a project exists elsewhere on your system it won't be
+detected.
 
 What commands are run with `tmuxinator` can be configured using 
 the config file.
@@ -78,13 +79,13 @@ the config file.
 ### Deleting a project
 
 To delete a project, run `workflows --delete`. You'll be greeted 
-with a `fzf` ui, but only with local projects. Selecting one will
+with a `fzf` UI, but only with local projects. Selecting one will
 cause checks to be run on whether the repo has a clean working tree 
 and is pushed to main. **NOTE** this only works for remote branches.
 With confirmation the project will be deleted. 
 
 Deleting using `workflows --delete` deletes the tmuxinator config 
-as well as the project in `~/Projects/`.
+as well as the project in the projects directory.
 
 ## Configuration
 
@@ -133,7 +134,7 @@ window_name="editor"
 
 ### github configuration
 
-**NOTE:** Both of these options require the `gh` cli tool, and for the user to be logged in.
+**NOTE** Both of these options require the `gh` cli tool, and for the user to be logged in.
 
 | Option | Purpose | Default Value |
 | ------ | ------- | ------------- | 
@@ -142,7 +143,7 @@ window_name="editor"
 
 ### git configuration
 
-**NOTE:** Both of these options require git, and for the project to be a git repo. If one of these
+**NOTE** Both of these options require git, and for the project to be a git repo. If one of these
 requirements is not fulfilled then both of these options will always be false when run.
 
 | Option | Purpose | Default Value |
