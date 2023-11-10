@@ -66,15 +66,14 @@ pub fn create_tmuxinator_config(project: &Repo, config: TmuxinatorConfig) -> io:
 /// - `project`     The project to create the config for
 /// - `config`      The user's config
 fn get_config_contents(project: &Repo, config: TmuxinatorConfig) -> String {
-    format!(
+    let mut content = format!(
         "\
 # {}
 
 name: {}
 root: {}
 
-windows:
-  - {}: {}",
+windows:",
         tmuxinator_config_dir()
             .to_str()
             .expect("Failed to cast pathbuf to string"),
@@ -83,9 +82,19 @@ windows:
             .get_project_root()
             .to_str()
             .expect("Failed to cast pathbuf to string"),
-        config.window_name(),
-        config.on_open()
-    )
+    );
+    for i in 0..config.window_names().len() {
+        content.push_str(
+            format!(
+                "\n - {}: {}",
+                config.window_names().get(i).unwrap(),
+                config.start_commands().get(i).unwrap()
+            )
+            .as_str(),
+        );
+    }
+
+    content
 }
 
 /// Deletes a tmuxinator config for a project
@@ -124,4 +133,44 @@ pub fn run_tmuxinator(project: &Repo, config: TmuxinatorConfig) -> io::Result<()
     let _ = Command::new("sh").args(["-c", &command]).spawn()?.wait();
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{config::WorkflowsConfig, repo::Repo};
+    use super::{get_config_contents, tmuxinator_config_dir};
+
+    #[test]
+    fn tmuxinator_config_works_with_multiple_windows() {
+        let toml = "\
+                    [tmuxinator]\n\
+                    window_names = ['editor', 'files']\n\
+                    start_commands = ['nvim .', 'yazi']";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        let project = Repo::new("test-repo", true, "Projects/test-repo");
+
+        let generated_config = get_config_contents(&project, config.tmuxinator());
+
+        assert_eq!(generated_config, format!(
+        "\
+# {}
+
+name: {}
+root: {}
+
+windows:
+ - editor: nvim .
+ - files: yazi",
+        tmuxinator_config_dir()
+            .to_str()
+            .expect("Failed to cast pathbuf to string"),
+        project.name(),
+        project
+            .get_project_root()
+            .to_str()
+            .expect("Failed to cast pathbuf to string"),
+    ));
+    }
 }

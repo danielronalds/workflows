@@ -3,7 +3,7 @@
 use serde::Deserialize;
 
 const DEFAULT_FRESH_CONFIG: bool = false;
-const DEFAULT_ON_OPEN: &str = "nvim .";
+const DEFAULT_START_COMMANDS: &str = "nvim .";
 const DEFAULT_WINDOW_NAME: &str = "editor";
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
@@ -18,12 +18,12 @@ pub struct TmuxinatorConfig {
     /// The command to run on opening the tmuxinator session
     ///
     /// Default: `"editor"`
-    window_name: Option<String>,
+    window_names: Option<Vec<String>>,
 
     /// The name of the tmuxinator spawned window
     ///
     /// Default: `"nvim ."`
-    on_open: Option<String>,
+    start_commands: Option<Vec<String>>,
 }
 
 impl TmuxinatorConfig {
@@ -37,24 +37,26 @@ impl TmuxinatorConfig {
     /// The command to run on opening the tmuxinator session
     ///
     /// Default: `"editor"`
-    pub fn on_open(&self) -> String {
-        self.on_open.clone().unwrap_or(DEFAULT_ON_OPEN.to_string())
+    pub fn start_commands(&self) -> Vec<String> {
+        self.start_commands
+            .clone()
+            .unwrap_or(vec![DEFAULT_START_COMMANDS.to_string()])
     }
 
     /// The name of the tmuxinator spawned window
     ///
     /// Default: `"nvim ."`
-    pub fn window_name(&self) -> String {
-        self.window_name
+    pub fn window_names(&self) -> Vec<String> {
+        self.window_names
             .clone()
-            .unwrap_or(DEFAULT_WINDOW_NAME.to_string())
+            .unwrap_or(vec![DEFAULT_WINDOW_NAME.to_string()])
     }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::config::{
-        tmuxinator::{DEFAULT_FRESH_CONFIG, DEFAULT_ON_OPEN, DEFAULT_WINDOW_NAME},
+        tmuxinator::{DEFAULT_FRESH_CONFIG, DEFAULT_START_COMMANDS, DEFAULT_WINDOW_NAME},
         WorkflowsConfig,
     };
 
@@ -84,11 +86,14 @@ mod tests {
     fn window_name_works() {
         let toml = "\
                     [tmuxinator]\n\
-                    window_name = 'testing'";
+                    window_names = ['testing', 'second_window']";
 
         let config: WorkflowsConfig = toml::from_str(toml).unwrap();
 
-        assert_eq!(config.tmuxinator().window_name, Some("testing".to_string()));
+        assert_eq!(
+            config.tmuxinator().window_names,
+            Some(vec!["testing".to_string(), "second_window".to_string()])
+        );
     }
 
     #[test]
@@ -97,20 +102,26 @@ mod tests {
 
         let config: WorkflowsConfig = toml::from_str(toml).unwrap();
 
-        assert_eq!(config.tmuxinator.clone().unwrap().window_name, None);
+        assert_eq!(config.tmuxinator.clone().unwrap().window_names, None);
 
-        assert_eq!(config.tmuxinator().window_name(), DEFAULT_WINDOW_NAME);
+        assert_eq!(
+            config.tmuxinator().window_names(),
+            vec![DEFAULT_WINDOW_NAME]
+        );
     }
 
     #[test]
     fn on_open_works() {
         let toml = "\
                     [tmuxinator]\n\
-                    on_open = 'testing'";
+                    start_commands = ['nvim .', 'yazi']";
 
         let config: WorkflowsConfig = toml::from_str(toml).unwrap();
 
-        assert_eq!(config.tmuxinator().on_open, Some("testing".to_string()));
+        assert_eq!(
+            config.tmuxinator().start_commands,
+            Some(vec!["nvim .".to_string(), "yazi".to_string()])
+        );
     }
 
     #[test]
@@ -119,8 +130,8 @@ mod tests {
 
         let config: WorkflowsConfig = toml::from_str(toml).unwrap();
 
-        assert_eq!(config.tmuxinator.clone().unwrap().on_open, None);
+        assert_eq!(config.tmuxinator.clone().unwrap().start_commands, None);
 
-        assert_eq!(config.tmuxinator().on_open(), DEFAULT_ON_OPEN);
+        assert_eq!(config.tmuxinator().start_commands(), vec![DEFAULT_START_COMMANDS]);
     }
 }
