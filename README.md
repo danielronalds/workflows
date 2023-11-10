@@ -42,7 +42,7 @@ Installing from cargo
 cargo install workflows
 ```
 
-Installing from source
+Installing latest from source
 
 ```console
 cargo install --git https://github.com/danielronalds/workflows
@@ -116,8 +116,8 @@ check_push=true
 
 [tmuxinator]
 fresh_config=false
-on_open="nvim ."
-window_name="editor"
+window_names=["editor"]
+start_commands=["nvim ."]
 ```
 
 ### General configuration
@@ -156,8 +156,8 @@ requirements is not fulfilled then both of these options will always be false wh
 | Option | Purpose | Default Value |
 | ------ | ------- | ------------- | 
 | `fresh_config` | If enabled, a tmuxinator configuration will be generated before every project launch. This can be useful if you've updated the other two options below | `false` |
-| `on_open` | The command to run when the tmux session is opened. Typically your terminal text editor. | `"nvim ."` |
-| `window_name` | The name of the tmux window | `"editor"` |
+| `window_names` | An array of names of the tmux windows tmuxinator should create | `["editor"]` |
+| `start_commands` | An array of the commands to run for each window when tmux is started. If there are not enough commands for the defined windows, then the default option is used. | `["nvim ."]` |
 
 ## Window Manager Integration
 
