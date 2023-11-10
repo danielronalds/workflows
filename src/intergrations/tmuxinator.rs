@@ -48,9 +48,25 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 /// - `config`      The user's config
 pub fn create_tmuxinator_config(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
-    let config_path = tmuxinator_config_dir();
-    let project_root = project.get_project_root();
-    let contents = format!(
+
+    let contents = get_config_contents(project, config);
+
+    fs::write(
+        tmuxinator_config_dir().join(config_filename),
+        contents.trim(),
+    )?;
+
+    Ok(())
+}
+
+/// Generates a tmuxinator config's contents for the given repo according to the user's preferences
+///
+/// # Parameters
+///
+/// - `project`     The project to create the config for
+/// - `config`      The user's config
+fn get_config_contents(project: &Repo, config: TmuxinatorConfig) -> String {
+    format!(
         "\
 # {}
 
@@ -59,20 +75,17 @@ root: {}
 
 windows:
   - {}: {}",
-        config_path
+        tmuxinator_config_dir()
             .to_str()
             .expect("Failed to cast pathbuf to string"),
         project.name(),
-        project_root
+        project
+            .get_project_root()
             .to_str()
             .expect("Failed to cast pathbuf to string"),
         config.window_name(),
         config.on_open()
-    );
-
-    fs::write(config_path.join(config_filename), contents.trim())?;
-
-    Ok(())
+    )
 }
 
 /// Deletes a tmuxinator config for a project
