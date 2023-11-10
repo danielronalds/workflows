@@ -83,12 +83,12 @@ impl TryFrom<PathBuf> for WorkflowsConfig {
     fn try_from(value: PathBuf) -> Result<Self, Self::Error> {
         let toml_string = match fs::read_to_string(value) {
             Ok(toml) => toml,
-            Err(_) => return Err("Couldn't read string")
+            Err(_) => return Err("Couldn't read string"),
         };
 
         match toml::from_str(&toml_string) {
             Ok(config) => Ok(config),
-            Err(_) => Err("Couldn't parse config from toml")
+            Err(_) => Err("Couldn't parse config from toml"),
         }
     }
 }

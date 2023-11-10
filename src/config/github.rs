@@ -36,7 +36,10 @@ impl GithubConfig {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{WorkflowsConfig, github::{DEFAULT_ENABLED, DEFAULT_CONFIRM_CLONING}};
+    use crate::config::{
+        github::{DEFAULT_CONFIRM_CLONING, DEFAULT_ENABLED},
+        WorkflowsConfig,
+    };
 
     #[test]
     fn enabled_works() {

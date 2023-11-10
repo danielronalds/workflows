@@ -36,7 +36,10 @@ impl GitConfig {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{WorkflowsConfig, git::{DEFAULT_CHECK_TREE, DEFAULT_CHECK_PUSH}};
+    use crate::config::{
+        git::{DEFAULT_CHECK_PUSH, DEFAULT_CHECK_TREE},
+        WorkflowsConfig,
+    };
 
     #[test]
     fn check_tree_works() {

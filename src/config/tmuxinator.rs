@@ -15,7 +15,6 @@ pub struct TmuxinatorConfig {
     fresh_config: Option<bool>,
 
     // TODO: Allows user's to configure multiple windows via the configuration
-
     /// The command to run on opening the tmuxinator session
     ///
     /// Default: `"editor"`
@@ -46,13 +45,18 @@ impl TmuxinatorConfig {
     ///
     /// Default: `"nvim ."`
     pub fn window_name(&self) -> String {
-        self.window_name.clone().unwrap_or(DEFAULT_WINDOW_NAME.to_string())
+        self.window_name
+            .clone()
+            .unwrap_or(DEFAULT_WINDOW_NAME.to_string())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{WorkflowsConfig, tmuxinator::{DEFAULT_FRESH_CONFIG, DEFAULT_WINDOW_NAME, DEFAULT_ON_OPEN}};
+    use crate::config::{
+        tmuxinator::{DEFAULT_FRESH_CONFIG, DEFAULT_ON_OPEN, DEFAULT_WINDOW_NAME},
+        WorkflowsConfig,
+    };
 
     #[test]
     fn fresh_config_works() {
