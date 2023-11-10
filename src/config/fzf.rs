@@ -27,7 +27,7 @@ mod tests {
     use crate::config::{fzf::DEFAULT_REVERSE_LAYOUT, WorkflowsConfig};
 
     #[test]
-    fn reverse_layout_dir_works() {
+    fn reverse_layout_works() {
         let toml = "\
 [fzf]
 reverse_layout = true";
@@ -38,7 +38,7 @@ reverse_layout = true";
     }
 
     #[test]
-    fn default_reverse_layout_dir_works() {
+    fn default_reverse_layout_works() {
         // The toml contains [fzf] so that the field is some on the WorkflowsConfig
         // allowing the testing of the reverse_layout field to be `None`
         let toml = "[fzf]";
