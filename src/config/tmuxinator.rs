@@ -3,8 +3,8 @@
 use serde::Deserialize;
 
 const DEFAULT_FRESH_CONFIG: bool = false;
-const DEFAULT_START_COMMANDS: &str = "nvim .";
 const DEFAULT_WINDOW_NAME: &str = "editor";
+pub const DEFAULT_START_COMMAND: &str = "nvim .";
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 /// The Tmuxinator config options
@@ -40,7 +40,7 @@ impl TmuxinatorConfig {
     pub fn start_commands(&self) -> Vec<String> {
         self.start_commands
             .clone()
-            .unwrap_or(vec![DEFAULT_START_COMMANDS.to_string()])
+            .unwrap_or(vec![DEFAULT_START_COMMAND.to_string()])
     }
 
     /// The name of the tmuxinator spawned window
@@ -56,7 +56,7 @@ impl TmuxinatorConfig {
 #[cfg(test)]
 mod tests {
     use crate::config::{
-        tmuxinator::{DEFAULT_FRESH_CONFIG, DEFAULT_START_COMMANDS, DEFAULT_WINDOW_NAME},
+        tmuxinator::{DEFAULT_FRESH_CONFIG, DEFAULT_START_COMMAND, DEFAULT_WINDOW_NAME},
         WorkflowsConfig,
     };
 
@@ -132,6 +132,9 @@ mod tests {
 
         assert_eq!(config.tmuxinator.clone().unwrap().start_commands, None);
 
-        assert_eq!(config.tmuxinator().start_commands(), vec![DEFAULT_START_COMMANDS]);
+        assert_eq!(
+            config.tmuxinator().start_commands(),
+            vec![DEFAULT_START_COMMAND]
+        );
     }
 }

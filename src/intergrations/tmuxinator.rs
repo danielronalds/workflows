@@ -88,6 +88,8 @@ windows:",
             format!(
                 "\n - {}: {}",
                 config.window_names().get(i).unwrap(),
+                // FIX: Provide a default in case the user has not defined enough start commands
+                // for the number of windows in their config
                 config.start_commands().get(i).unwrap()
             )
             .as_str(),
@@ -137,8 +139,9 @@ pub fn run_tmuxinator(project: &Repo, config: TmuxinatorConfig) -> io::Result<()
 
 #[cfg(test)]
 mod tests {
-    use crate::{config::WorkflowsConfig, repo::Repo};
     use super::{get_config_contents, tmuxinator_config_dir};
+    use crate::config::{tmuxinator::DEFAULT_START_COMMAND, WorkflowsConfig};
+    use crate::repo::Repo;
 
     #[test]
     fn tmuxinator_config_works_with_multiple_windows() {
@@ -153,8 +156,10 @@ mod tests {
 
         let generated_config = get_config_contents(&project, config.tmuxinator());
 
-        assert_eq!(generated_config, format!(
-        "\
+        assert_eq!(
+            generated_config,
+            format!(
+                "\
 # {}
 
 name: {}
@@ -163,14 +168,53 @@ root: {}
 windows:
  - editor: nvim .
  - files: yazi",
-        tmuxinator_config_dir()
-            .to_str()
-            .expect("Failed to cast pathbuf to string"),
-        project.name(),
-        project
-            .get_project_root()
-            .to_str()
-            .expect("Failed to cast pathbuf to string"),
-    ));
+                tmuxinator_config_dir()
+                    .to_str()
+                    .expect("Failed to cast pathbuf to string"),
+                project.name(),
+                project
+                    .get_project_root()
+                    .to_str()
+                    .expect("Failed to cast pathbuf to string"),
+            )
+        );
+    }
+
+    #[test]
+    fn tmuxinator_config_works_with_not_enough_start_commands() {
+        let toml = "\
+                    [tmuxinator]\n\
+                    window_names = ['editor', 'files']\n\
+                    start_commands = ['nvim .']";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        let project = Repo::new("test-repo", true, "Projects/test-repo");
+
+        let generated_config = get_config_contents(&project, config.tmuxinator());
+
+        assert_eq!(
+            generated_config,
+            format!(
+                "\
+# {}
+
+name: {}
+root: {}
+
+windows:
+ - editor: nvim .
+ - files: {}",
+                tmuxinator_config_dir()
+                    .to_str()
+                    .expect("Failed to cast pathbuf to string"),
+                project.name(),
+                project
+                    .get_project_root()
+                    .to_str()
+                    .expect("Failed to cast pathbuf to string"),
+                DEFAULT_START_COMMAND
+            )
+        );
     }
 }
