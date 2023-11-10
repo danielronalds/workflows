@@ -1,6 +1,9 @@
-//! This module contains the logic for github configuration
+//! This module contains the logic for git configuration
 
 use serde::Deserialize;
+
+const DEFAULT_CHECK_TREE: bool = true;
+const DEFAULT_CHECK_PUSH: bool = true;
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct GitConfig {
@@ -18,7 +21,7 @@ impl GitConfig {
     ///
     /// Default: `true`
     pub fn check_tree(&self) -> bool {
-        self.check_tree.unwrap_or(true)
+        self.check_tree.unwrap_or(DEFAULT_CHECK_TREE)
     }
 
     /// Whether to check the push status of the repo  before deleting
@@ -27,6 +30,55 @@ impl GitConfig {
     ///
     /// Default: `true`
     pub fn check_push(&self) -> bool {
-        self.check_push.unwrap_or(true)
+        self.check_push.unwrap_or(DEFAULT_CHECK_PUSH)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::config::{WorkflowsConfig, git::{DEFAULT_CHECK_TREE, DEFAULT_CHECK_PUSH}};
+
+    #[test]
+    fn check_tree_works() {
+        let toml = "\
+                    [git]\n\
+                    check_tree = false";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.git().check_tree, Some(false));
+    }
+
+    #[test]
+    fn default_check_tree_works() {
+        let toml = "[git]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.git.clone().unwrap().check_tree, None);
+
+        assert_eq!(config.git().check_tree(), DEFAULT_CHECK_TREE);
+    }
+
+    #[test]
+    fn check_push_works() {
+        let toml = "\
+                    [git]\n\
+                    check_push = false";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.git().check_push, Some(false));
+    }
+
+    #[test]
+    fn default_check_push_works() {
+        let toml = "[git]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.git.clone().unwrap().check_push, None);
+
+        assert_eq!(config.git().check_push(), DEFAULT_CHECK_PUSH);
     }
 }
