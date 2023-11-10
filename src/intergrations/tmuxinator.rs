@@ -1,6 +1,6 @@
 use std::{fs, io, path::PathBuf, process::Command};
 
-use crate::config::tmuxinator::TmuxinatorConfig;
+use crate::config::tmuxinator::{TmuxinatorConfig, DEFAULT_START_COMMAND};
 use crate::repo::Repo;
 
 /// The path to the tmuxinator config directory
@@ -87,10 +87,14 @@ windows:",
         content.push_str(
             format!(
                 "\n - {}: {}",
-                config.window_names().get(i).unwrap(),
-                // FIX: Provide a default in case the user has not defined enough start commands
-                // for the number of windows in their config
-                config.start_commands().get(i).unwrap()
+                config
+                    .window_names()
+                    .get(i)
+                    .expect("Safe to unwrap here due to the constraint of the for loop"),
+                config
+                    .start_commands()
+                    .get(i)
+                    .unwrap_or(&DEFAULT_START_COMMAND.to_string())
             )
             .as_str(),
         );
