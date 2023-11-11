@@ -1,13 +1,34 @@
 //! This module contains the logic for the delete command
 
+use std::fs;
 use std::io::{self, stdout, Write};
 
 use colored::Colorize;
 
 use crate::config::WorkflowsConfig;
 use crate::intergrations::{self, git::PushedResult};
-use crate::local_projects;
 use crate::repo::Repo;
+
+/// Runs fzf with only local projects, and deletes the selected one
+///
+/// # Parameters
+///
+/// - `config` The user's config
+pub fn delete_project(config: WorkflowsConfig) -> io::Result<()> {
+    let (project, projects) = intergrations::fzf::run_fzf("Delete: ", true, &config);
+
+    let selected_projects: Vec<Repo> = projects
+        .iter()
+        .filter(|x| x.name() == project)
+        .map(|x| x.to_owned())
+        .collect();
+
+    if let Some(selected_project) = selected_projects.get(0) {
+        delete_local_project(selected_project, config)?;
+    }
+
+    Ok(())
+}
 
 /// Deletes a project from ~/Projects/
 ///
@@ -15,7 +36,7 @@ use crate::repo::Repo;
 ///
 /// - `repo`   The project to delete
 /// - `config` The user's config
-pub fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
+fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
     if config.git().check_push() {
         // Checking if the project has been pushed
         print!("[{}] main pushed...", "~".bright_yellow());
@@ -66,8 +87,18 @@ pub fn delete_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
     println!("Deleting tmuxinator config");
     intergrations::tmuxinator::delete_tmuxinator(repo)?;
     println!("Deleting project from ~/Projects/");
-    local_projects::delete_local_project(repo)?;
+    delete_project_dir(repo)?;
 
     println!("Deleted {}!", repo.name());
+    Ok(())
+}
+
+/// Deletes a project from ~/Projects/
+///
+/// # Parameters
+///
+/// - `project` The project to delete
+fn delete_project_dir(project: &Repo) -> io::Result<()> {
+    fs::remove_dir_all(project.get_project_root())?;
     Ok(())
 }

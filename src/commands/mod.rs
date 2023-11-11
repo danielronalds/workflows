@@ -8,3 +8,6 @@ pub use health::health_check;
 
 mod delete;
 pub use delete::delete_project;
+
+mod open;
+pub use open::open_project;

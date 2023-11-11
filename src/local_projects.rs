@@ -2,16 +2,6 @@ use std::{fs, io};
 
 use crate::repo::Repo;
 
-/// Deletes a project from ~/Projects/
-///
-/// # Parameters
-///
-/// - `project` The project to delete
-pub fn delete_local_project(project: &Repo) -> io::Result<()> {
-    fs::remove_dir_all(project.get_project_root())?;
-    Ok(())
-}
-
 /// Gets the projects currently in ~/Projects/
 ///
 /// # Parameters
