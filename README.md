@@ -105,6 +105,7 @@ programs_dir="Projects/"
 
 [fzf]
 layout="default"
+border="none"
 
 [github]
 enabled=true
@@ -131,6 +132,7 @@ start_commands=["nvim ."]
 | Option | Purpose | Default Value |
 | ------ | ------- | ------------- | 
 | `layout` | The layout fzf should use, either `default`, `reverse`, or `reverse-list`| `"default"` |
+| `border` | The border fzf should display around the finder. Options include: `rounded`, `sharp`, `none`, etc. For more run `fzf --help`. All fzf border types are supported. | `"none"` |
 
 ### github configuration
 
