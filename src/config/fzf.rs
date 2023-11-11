@@ -1,13 +1,13 @@
 //! This module contains the logic for fzf configuration
 
-use fzf_wrapped::{Layout, Border};
+use fzf_wrapped::{Border, Layout};
 use serde::Deserialize;
 
 const DEFAULT_BORDER_LABEL: &str = "";
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
-   /// What layout fzf should use
+    /// What layout fzf should use
     ///
     /// Default: `default`
     layout: Option<String>,
@@ -20,7 +20,7 @@ pub struct FzfConfig {
     /// What label should be shown in the border, requires border to not be none
     ///
     /// Default: `""`
-    border_label: Option<String>
+    border_label: Option<String>,
 }
 
 impl FzfConfig {
@@ -48,14 +48,16 @@ impl FzfConfig {
     ///
     /// Default: `""`
     pub fn border_label(&self) -> String {
-        self.border_label.clone().unwrap_or(DEFAULT_BORDER_LABEL.to_string())
+        self.border_label
+            .clone()
+            .unwrap_or(DEFAULT_BORDER_LABEL.to_string())
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{WorkflowsConfig, fzf::DEFAULT_BORDER_LABEL};
-    use fzf_wrapped::{Layout, Border};
+    use crate::config::{fzf::DEFAULT_BORDER_LABEL, WorkflowsConfig};
+    use fzf_wrapped::{Border, Layout};
 
     #[test]
     fn layout_works() {
@@ -133,6 +135,9 @@ mod tests {
 
         assert_eq!(config.fzf().border_label, None);
 
-        assert_eq!(config.fzf().border_label(), DEFAULT_BORDER_LABEL.to_string());
+        assert_eq!(
+            config.fzf().border_label(),
+            DEFAULT_BORDER_LABEL.to_string()
+        );
     }
 }
