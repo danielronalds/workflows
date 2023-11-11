@@ -2,7 +2,7 @@
 //!
 //! Heavily based on the [rust_fzf library](https://crates.io/crates/rust_fzf)
 
-use fzf_wrapped::{Color, Fzf, Layout};
+use fzf_wrapped::{Color, Fzf};
 
 use crate::config::WorkflowsConfig;
 use crate::intergrations;
@@ -25,6 +25,7 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
     let mut fzf = Fzf::builder()
         .prompt(prompt)
         .color(Color::Sixteen)
+        .border(config.fzf().border())
         .ansi(true)
         .layout(config.fzf().layout())
         .build()
