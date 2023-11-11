@@ -104,7 +104,7 @@ default configuration is used
 programs_dir="Projects/"
 
 [fzf]
-reverse_layout=true
+layout="default"
 
 [github]
 enabled=true
@@ -130,7 +130,7 @@ start_commands=["nvim ."]
 
 | Option | Purpose | Default Value |
 | ------ | ------- | ------------- | 
-| `reverse_layout` | Whether the reverse layout should be used with fzf or not | `true` |
+| `layout` | The layout fzf should use, either `default`, `reverse`, or `reverse-list`| `"default"` |
 
 ### github configuration
 
