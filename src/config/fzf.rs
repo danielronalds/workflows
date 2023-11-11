@@ -3,11 +3,11 @@
 use fzf_wrapped::{Layout, Border};
 use serde::Deserialize;
 
-// TODO: Add option for configuring a border label
+const DEFAULT_BORDER_LABEL: &str = "";
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
-    /// What layout fzf should use
+   /// What layout fzf should use
     ///
     /// Default: `default`
     layout: Option<String>,
@@ -15,7 +15,12 @@ pub struct FzfConfig {
     /// What border fzf should use
     ///
     /// Default: `none`
-    border: Option<String>
+    border: Option<String>,
+
+    /// What label should be shown in the border, requires border to not be none
+    ///
+    /// Default: `""`
+    border_label: Option<String>
 }
 
 impl FzfConfig {
@@ -38,11 +43,18 @@ impl FzfConfig {
             None => Border::default(),
         }
     }
+
+    /// What label should be shown in the border, requires border to not be none
+    ///
+    /// Default: `""`
+    pub fn border_label(&self) -> String {
+        self.border_label.clone().unwrap_or(DEFAULT_BORDER_LABEL.to_string())
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::config::WorkflowsConfig;
+    use crate::config::{WorkflowsConfig, fzf::DEFAULT_BORDER_LABEL};
     use fzf_wrapped::{Layout, Border};
 
     #[test]
@@ -100,5 +112,27 @@ mod tests {
         assert_eq!(config.fzf().border, Some("invalid-border".to_string()));
 
         assert_eq!(config.fzf().border(), Border::default());
+    }
+
+    #[test]
+    fn border_label_works() {
+        let toml = "\
+                    [fzf]\n\
+                    border_label = 'Workflows'";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.fzf().border_label, Some("Workflows".to_string()));
+    }
+
+    #[test]
+    fn default_border_label_works() {
+        let toml = "[fzf]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.fzf().border_label, None);
+
+        assert_eq!(config.fzf().border_label(), DEFAULT_BORDER_LABEL.to_string());
     }
 }

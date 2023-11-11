@@ -28,6 +28,7 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
         .border(config.fzf().border())
         .ansi(true)
         .layout(config.fzf().layout())
+        .border_label(config.fzf().border_label())
         .build()
         .unwrap();
 
