@@ -5,16 +5,16 @@ use serde::Deserialize;
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
-    /// Whether fzf should have the reverse layout
+    /// What layout fzf should use
     ///
-    /// Default: `true`
+    /// Default: `default`
     layout: Option<String>,
 }
 
 impl FzfConfig {
-    /// Whether fzf should have the reverse layout
+    /// What layout fzf should use
     ///
-    /// Default: `true`
+    /// Default: `default`
     pub fn layout(&self) -> Layout {
         match self.layout.clone() {
             Some(layout) => Layout::from(layout),
