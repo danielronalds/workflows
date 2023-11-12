@@ -4,9 +4,9 @@
 
 use fzf_wrapped::{Color, Fzf};
 
+use crate::commands;
 use crate::config::WorkflowsConfig;
 use crate::intergrations;
-use crate::local_projects;
 use crate::repo::Repo;
 
 /// Run fzf to select a project. If in delete mode, only local projects will be displayed
@@ -36,7 +36,7 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
 
     // NOTE: Experiment with colours for local projects and git projects
 
-    let local_projects = local_projects::get_local_projects(config.general().projects_dir());
+    let local_projects = commands::get_local_projects(config.general().projects_dir());
     fzf.add_items(local_projects.clone())
         .expect("Failed to add local repos");
 

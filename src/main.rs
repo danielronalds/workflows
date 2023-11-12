@@ -2,8 +2,6 @@ use std::{env, io};
 
 mod repo;
 
-mod local_projects;
-
 mod intergrations;
 
 mod config;
