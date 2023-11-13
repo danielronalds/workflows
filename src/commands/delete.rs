@@ -15,7 +15,8 @@ use crate::repo::Repo;
 ///
 /// - `config` The user's config
 pub fn delete_project(config: WorkflowsConfig) -> io::Result<()> {
-    let (project, projects) = intergrations::fzf::run_fzf("Delete: ", true, &config);
+    let (project, projects) =
+        intergrations::fzf::run_fzf(&config.fzf().delete_prompt(), true, &config);
 
     let selected_projects: Vec<Repo> = projects
         .iter()

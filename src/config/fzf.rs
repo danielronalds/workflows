@@ -7,6 +7,8 @@ const DEFAULT_BORDER_LABEL: &str = "";
 
 /// The default prompt fzf will show when opening a project
 const DEFAULT_OPEN_PROMPT: &str = "Open: ";
+/// The default prompt fzf will show when deleting a project
+const DEFAULT_DELETE_PROMPT: &str = "Delete: ";
 
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
@@ -29,6 +31,11 @@ pub struct FzfConfig {
     ///
     /// Default: `Open: `
     open_prompt: Option<String>,
+
+    /// The prompt fzf should display when opening a project
+    ///
+    /// Default: `Open: `
+    delete_prompt: Option<String>,
 }
 
 impl FzfConfig {
@@ -67,12 +74,19 @@ impl FzfConfig {
             .clone()
             .unwrap_or(DEFAULT_OPEN_PROMPT.to_string())
     }
+
+    /// The default prompt fzf will show when deleting a project
+    pub fn delete_prompt(&self) -> String {
+        self.delete_prompt
+            .clone()
+            .unwrap_or(DEFAULT_DELETE_PROMPT.to_string())
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::config::{
-        fzf::{DEFAULT_BORDER_LABEL, DEFAULT_OPEN_PROMPT},
+        fzf::{DEFAULT_BORDER_LABEL, DEFAULT_DELETE_PROMPT, DEFAULT_OPEN_PROMPT},
         WorkflowsConfig,
     };
     use fzf_wrapped::{Border, Layout};
@@ -179,5 +193,30 @@ open_prompt = 'Launch: '";
         assert_eq!(config.fzf().open_prompt.clone(), None);
 
         assert_eq!(config.fzf().open_prompt(), DEFAULT_OPEN_PROMPT.to_string())
+    }
+
+    #[test]
+    fn delete_prompt_works() {
+        let toml = "\
+[fzf]
+delete_prompt = 'Remove: '";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(config.fzf().delete_prompt, Some("Remove: ".to_string()))
+    }
+
+    #[test]
+    fn delete_open_prompt_works() {
+        let toml = "[fzf]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(config.fzf().delete_prompt.clone(), None);
+
+        assert_eq!(
+            config.fzf().delete_prompt(),
+            DEFAULT_DELETE_PROMPT.to_string()
+        )
     }
 }
