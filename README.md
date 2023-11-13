@@ -109,6 +109,8 @@ border="none"
 border_label=""
 open_prompt="Open: "
 delete_prompt="Delete: "
+pointer=">"
+theme="dark"
 
 [github]
 enabled=true
@@ -139,6 +141,8 @@ start_commands=["nvim ."]
 | `border_label` | The label to show in the border. If blank or no border is selected, the label won't show | `""` |
 | `open_prompt` | The prompt fzf should show when opening a project | `"Open: " ` |
 | `delete_prompt` | The prompt fzf should show when deleteing a project | `"Delete: " ` |
+| `pointer` | The pointer to the current item in fzf | `">"` |
+| `theme` | The theme to use with fzf. Options include: `dark`, `light`, `16`, `bw` | `"dark"` |
 
 ### github configuration
 
