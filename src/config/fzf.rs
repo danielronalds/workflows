@@ -10,6 +10,8 @@ const DEFAULT_OPEN_PROMPT: &str = "Open: ";
 /// The default prompt fzf will show when deleting a project
 const DEFAULT_DELETE_PROMPT: &str = "Delete: ";
 
+const DEFAULT_POINTER: &str = ">";
+
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
     /// What layout fzf should use
@@ -36,6 +38,11 @@ pub struct FzfConfig {
     ///
     /// Default: `Open: `
     delete_prompt: Option<String>,
+
+    /// The pointer to the current item in fzf
+    ///
+    /// Default: `>`
+    pointer: Option<String>,
 }
 
 impl FzfConfig {
@@ -81,12 +88,19 @@ impl FzfConfig {
             .clone()
             .unwrap_or(DEFAULT_DELETE_PROMPT.to_string())
     }
+
+    /// The pointer to the current item in fzf
+    ///
+    /// Default: `>`
+    pub fn pointer(&self) -> String {
+        self.pointer.clone().unwrap_or(DEFAULT_POINTER.to_string())
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::config::{
-        fzf::{DEFAULT_BORDER_LABEL, DEFAULT_DELETE_PROMPT, DEFAULT_OPEN_PROMPT},
+        fzf::{DEFAULT_BORDER_LABEL, DEFAULT_DELETE_PROMPT, DEFAULT_OPEN_PROMPT, DEFAULT_POINTER},
         WorkflowsConfig,
     };
     use fzf_wrapped::{Border, Layout};
@@ -207,7 +221,7 @@ delete_prompt = 'Remove: '";
     }
 
     #[test]
-    fn delete_open_prompt_works() {
+    fn default_delete_prompt_works() {
         let toml = "[fzf]";
 
         let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
@@ -218,5 +232,27 @@ delete_prompt = 'Remove: '";
             config.fzf().delete_prompt(),
             DEFAULT_DELETE_PROMPT.to_string()
         )
+    }
+
+    #[test]
+    fn pointer_works() {
+        let toml = "\
+[fzf]
+pointer = '->'";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(config.fzf().pointer, Some("->".to_string()))
+    }
+
+    #[test]
+    fn default_pointer_works() {
+        let toml = "[fzf]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(config.fzf().pointer.clone(), None);
+
+        assert_eq!(config.fzf().pointer(), DEFAULT_POINTER.to_string())
     }
 }

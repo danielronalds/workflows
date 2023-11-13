@@ -22,13 +22,15 @@ use crate::repo::Repo;
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
 pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (String, Vec<Repo>) {
+    let fzf_config = config.fzf();
     let mut fzf = Fzf::builder()
         .prompt(prompt)
+        .pointer(fzf_config.pointer())
         .color(Color::Sixteen)
-        .border(config.fzf().border())
+        .border(fzf_config.border())
         .ansi(true)
-        .layout(config.fzf().layout())
-        .border_label(config.fzf().border_label())
+        .layout(fzf_config.layout())
+        .border_label(fzf_config.border_label())
         .build()
         .unwrap();
 
