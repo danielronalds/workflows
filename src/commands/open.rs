@@ -10,7 +10,8 @@ use crate::repo::Repo;
 ///
 /// - `config` The user's config
 pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
-    let (project, projects) = intergrations::fzf::run_fzf("Open: ", false, &config);
+    let (project, projects) =
+        intergrations::fzf::run_fzf(&config.fzf().open_prompt(), false, &config);
 
     let selected_projects: Vec<Repo> = projects
         .iter()

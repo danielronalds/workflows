@@ -5,6 +5,9 @@ use serde::Deserialize;
 
 const DEFAULT_BORDER_LABEL: &str = "";
 
+/// The default prompt fzf will show when opening a project
+const DEFAULT_OPEN_PROMPT: &str = "Open: ";
+
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
     /// What layout fzf should use
@@ -21,6 +24,11 @@ pub struct FzfConfig {
     ///
     /// Default: `""`
     border_label: Option<String>,
+
+    /// The prompt fzf should display when opening a project
+    ///
+    /// Default: `Open: `
+    open_prompt: Option<String>,
 }
 
 impl FzfConfig {
@@ -52,11 +60,21 @@ impl FzfConfig {
             .clone()
             .unwrap_or(DEFAULT_BORDER_LABEL.to_string())
     }
+
+    /// The default prompt fzf will show when opening a project
+    pub fn open_prompt(&self) -> String {
+        self.open_prompt
+            .clone()
+            .unwrap_or(DEFAULT_OPEN_PROMPT.to_string())
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{fzf::DEFAULT_BORDER_LABEL, WorkflowsConfig};
+    use crate::config::{
+        fzf::{DEFAULT_BORDER_LABEL, DEFAULT_OPEN_PROMPT},
+        WorkflowsConfig,
+    };
     use fzf_wrapped::{Border, Layout};
 
     #[test]
@@ -139,5 +157,27 @@ mod tests {
             config.fzf().border_label(),
             DEFAULT_BORDER_LABEL.to_string()
         );
+    }
+
+    #[test]
+    fn open_prompt_works() {
+        let toml = "\
+[fzf]
+open_prompt = 'Launch: '";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(config.fzf().open_prompt, Some("Launch: ".to_string()))
+    }
+
+    #[test]
+    fn default_open_prompt_works() {
+        let toml = "[fzf]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(config.fzf().open_prompt.clone(), None);
+
+        assert_eq!(config.fzf().open_prompt(), DEFAULT_OPEN_PROMPT.to_string())
     }
 }
