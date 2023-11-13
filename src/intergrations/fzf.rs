@@ -2,8 +2,6 @@
 //!
 //! Heavily based on the [rust_fzf library](https://crates.io/crates/rust_fzf)
 
-use fzf_wrapped::{Color, Fzf};
-
 use crate::commands;
 use crate::config::WorkflowsConfig;
 use crate::intergrations;
@@ -23,10 +21,10 @@ use crate::repo::Repo;
 /// being the merged list of local and github repos
 pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (String, Vec<Repo>) {
     let fzf_config = config.fzf();
-    let mut fzf = Fzf::builder()
+    let mut fzf = fzf_wrapped::Fzf::builder()
         .prompt(prompt)
         .pointer(fzf_config.pointer())
-        .color(Color::Sixteen)
+        .color(fzf_config.theme())
         .border(fzf_config.border())
         .ansi(true)
         .layout(fzf_config.layout())

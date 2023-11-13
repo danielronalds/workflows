@@ -1,6 +1,6 @@
 //! This module contains the logic for fzf configuration
 
-use fzf_wrapped::{Border, Layout};
+use fzf_wrapped::{Border, Layout, Color};
 use serde::Deserialize;
 
 const DEFAULT_BORDER_LABEL: &str = "";
@@ -43,6 +43,9 @@ pub struct FzfConfig {
     ///
     /// Default: `>`
     pointer: Option<String>,
+
+    /// The colours fzf should use, same as 
+    theme: Option<String>
 }
 
 impl FzfConfig {
@@ -95,6 +98,14 @@ impl FzfConfig {
     pub fn pointer(&self) -> String {
         self.pointer.clone().unwrap_or(DEFAULT_POINTER.to_string())
     }
+
+    /// The theme to use fzf with
+    pub fn theme(&self) -> Color {
+        match self.theme.clone() {
+            Some(color) => Color::from(color),
+            None => Color::default(),
+        }
+    }
 }
 
 #[cfg(test)]
@@ -103,7 +114,7 @@ mod tests {
         fzf::{DEFAULT_BORDER_LABEL, DEFAULT_DELETE_PROMPT, DEFAULT_OPEN_PROMPT, DEFAULT_POINTER},
         WorkflowsConfig,
     };
-    use fzf_wrapped::{Border, Layout};
+    use fzf_wrapped::{Border, Layout, Color};
 
     #[test]
     fn layout_works() {
@@ -255,4 +266,40 @@ pointer = '->'";
 
         assert_eq!(config.fzf().pointer(), DEFAULT_POINTER.to_string())
     }
+
+    #[test]
+    fn theme_works() {
+        let toml = "\
+                    [fzf]\n\
+                    theme = 'bw'";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.fzf().theme(), Color::Bw);
+    }
+
+    #[test]
+    fn default_theme_works() {
+        let toml = "[fzf]";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.fzf().theme, None);
+
+        assert_eq!(config.fzf().theme(), Color::default())
+    }
+
+    #[test]
+    fn invalid_theme_recovers() {
+        let toml = "\
+                    [fzf]\n\
+                    theme = 'invalid-color'";
+
+        let config: WorkflowsConfig = toml::from_str(toml).unwrap();
+
+        assert_eq!(config.fzf().theme, Some("invalid-color".to_string()));
+
+        assert_eq!(config.fzf().theme(), Color::default());
+    }
+
 }
