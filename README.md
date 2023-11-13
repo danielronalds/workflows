@@ -107,6 +107,8 @@ programs_dir="Projects/"
 layout="default"
 border="none"
 border_label=""
+open_prompt="Open: "
+delete_prompt="Delete: "
 
 [github]
 enabled=true
@@ -135,6 +137,8 @@ start_commands=["nvim ."]
 | `layout` | The layout fzf should use, either `default`, `reverse`, or `reverse-list`| `"default"` |
 | `border` | The border fzf should display around the finder. Options include: `rounded`, `sharp`, `none`, etc. For more run `fzf --help`. All fzf border types are supported. | `"none"` |
 | `border_label` | The label to show in the border. If blank or no border is selected, the label won't show | `""` |
+| `open_prompt` | The prompt fzf should show when opening a project | `"Open: " ` |
+| `delete_prompt` | The prompt fzf should show when deleteing a project | `"Delete: " ` |
 
 ### github configuration
 
