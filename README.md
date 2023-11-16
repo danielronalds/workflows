@@ -76,6 +76,8 @@ detected.
 What commands are run with `tmuxinator` can be configured using 
 the config file.
 
+<!--- TODO: Write documentation for creating a project -->
+
 ### Deleting a project
 
 To delete a project, run `workflows --delete`. You'll be greeted 
