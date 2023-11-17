@@ -76,7 +76,13 @@ detected.
 What commands are run with `tmuxinator` can be configured using 
 the config file.
 
-<!--- TODO: Write documentation for creating a project -->
+### Creating a project
+
+To create a project, run `workflows --new <project-name>`. This creates a
+directory with the name of the project in the projects directory. A
+`tmuxinator` config is created and run, launching the project in `tmux`.
+
+The command `--new` can be exchanged for the shorthand `-n`.
 
 ### Deleting a project
 
