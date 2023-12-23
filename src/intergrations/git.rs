@@ -1,4 +1,4 @@
-use std::{io, process::Command};
+use std::{io, process::{Command, Stdio}};
 
 use crate::{config::general::GeneralConfig, repo::Repo};
 
@@ -12,23 +12,20 @@ pub enum PushedResult {
 ///
 /// # Returns
 ///
-/// `None` if the repo doesn't exist, otherwise Some(())
-pub fn clone_repo(url: &str, config: &GeneralConfig) -> Option<()> {
-    let output = Command::new("git")
-        .current_dir(
-            dirs::home_dir()
+/// An IO error if the repo doesn't exist, otherwise `Ok(())`
+pub fn clone_repo(url: &str, config: &GeneralConfig) -> io::Result<()> {
+    let clone_dir = dirs::home_dir()
                 .expect("Failed to get home dir")
-                .join(config.projects_dir()),
-        )
-        .args(vec!["clone", url])
-        .output()
-        .ok()?;
+                .join(config.projects_dir());
 
-    if String::from_utf8_lossy(&output.stderr).contains("fatal") {
-        return None;
-    }
+    let mut command = Command::new("git")
+        .current_dir(clone_dir)
+        .args(["clone", url])
+        .stdout(Stdio::piped())
+        .spawn()?;
 
-    Some(())
+    command.wait()?;
+    Ok(())
 }
 
 /// Checks if the repo has every commit pushed
