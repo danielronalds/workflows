@@ -95,6 +95,12 @@ With confirmation the project will be deleted.
 Deleting using `workflows --delete` deletes the tmuxinator config 
 as well as the project in the projects directory.
 
+### Cloning a project
+
+Workflows can also be used to clone git repos using `workflows --clone`,
+or the short flag `-c`. This command is helpful for checking out projects 
+that are not your own, and thus do not show up in the default open prompt.
+
 ## Configuration
 
 `workflows` is configured by a toml file in either of the following paths
