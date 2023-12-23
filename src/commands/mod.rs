@@ -1,7 +1,7 @@
 //! This module contains all the commands the program contains
 
 // TODO: Add --generate-config flag for creating a default configuration
-// TODO: Add --git command for cloning a git repo
+// TODO: Add rename command
 
 mod health;
 pub use health::health_check;
@@ -15,3 +15,6 @@ pub use open::open_project;
 
 mod new;
 pub use new::new_project;
+
+mod clone;
+pub use clone::git_clone;

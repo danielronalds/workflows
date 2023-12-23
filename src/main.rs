@@ -34,5 +34,12 @@ fn main() -> io::Result<()> {
         }
     }
 
+    if args.contains(&"--clone".to_string()) || args.contains(&"-c".to_string()){
+        let repo = commands::git_clone(args.get(2).cloned(), config.general());
+        if let Some(repo) = repo {
+            return intergrations::tmuxinator::run_tmuxinator(&repo, config.tmuxinator());
+        }
+    }
+
     commands::open_project(config)
 }
