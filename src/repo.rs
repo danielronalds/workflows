@@ -46,6 +46,18 @@ impl Repo {
         self.name.clone()
     }
 
+    /// Returns the name of the project, with an indicator if it's not local
+    pub fn list_name(&self) -> String {
+        format!(
+            "{}{}",
+            match self.local {
+                true => "",
+                false => "  ",
+            },
+            self.name()
+        )
+    }
+
     /// Whether the project already exists in ~/Projects
     pub fn local(&self) -> bool {
         self.local
@@ -66,6 +78,6 @@ impl Repo {
 
 impl From<Repo> for String {
     fn from(value: Repo) -> Self {
-        value.name()
+        value.list_name()
     }
 }
