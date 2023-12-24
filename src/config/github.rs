@@ -114,6 +114,9 @@ mod tests {
 
         assert_eq!(config.github.clone().unwrap().project_indicator, None);
 
-        assert_eq!(config.github().project_indicator(), DEFAULT_PROJECT_INDICATOR);
+        assert_eq!(
+            config.github().project_indicator(),
+            DEFAULT_PROJECT_INDICATOR
+        );
     }
 }

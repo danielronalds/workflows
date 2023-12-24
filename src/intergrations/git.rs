@@ -1,4 +1,7 @@
-use std::{io, process::{Command, Stdio}};
+use std::{
+    io,
+    process::{Command, Stdio},
+};
 
 use crate::{config::general::GeneralConfig, repo::Repo};
 
@@ -15,8 +18,8 @@ pub enum PushedResult {
 /// An IO error if the repo doesn't exist, otherwise `Ok(())`
 pub fn clone_repo(url: &str, config: &GeneralConfig) -> io::Result<()> {
     let clone_dir = dirs::home_dir()
-                .expect("Failed to get home dir")
-                .join(config.projects_dir());
+        .expect("Failed to get home dir")
+        .join(config.projects_dir());
 
     let mut command = Command::new("git")
         .current_dir(clone_dir)

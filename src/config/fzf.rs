@@ -1,6 +1,6 @@
 //! This module contains the logic for fzf configuration
 
-use fzf_wrapped::{Border, Layout, Color};
+use fzf_wrapped::{Border, Color, Layout};
 use serde::Deserialize;
 
 const DEFAULT_BORDER_LABEL: &str = "";
@@ -44,8 +44,8 @@ pub struct FzfConfig {
     /// Default: `>`
     pointer: Option<String>,
 
-    /// The colours fzf should use, same as 
-    theme: Option<String>
+    /// The colours fzf should use, same as
+    theme: Option<String>,
 }
 
 impl FzfConfig {
@@ -114,7 +114,7 @@ mod tests {
         fzf::{DEFAULT_BORDER_LABEL, DEFAULT_DELETE_PROMPT, DEFAULT_OPEN_PROMPT, DEFAULT_POINTER},
         WorkflowsConfig,
     };
-    use fzf_wrapped::{Border, Layout, Color};
+    use fzf_wrapped::{Border, Color, Layout};
 
     #[test]
     fn layout_works() {
@@ -301,5 +301,4 @@ pointer = '->'";
 
         assert_eq!(config.fzf().theme(), Color::default());
     }
-
 }
