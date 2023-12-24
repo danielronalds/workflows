@@ -129,6 +129,7 @@ theme="dark"
 [github]
 enabled=true
 confirm_cloning=true
+project_indicator="  "
 
 [git]
 check_tree=true
@@ -166,6 +167,7 @@ start_commands=["nvim ."]
 | ------ | ------- | ------------- | 
 | `enabled` | Whether to enable GitHub Intergration  | `true` |
 | `confirm_cloning` | Whether to ask for confirmation before cloning a git repo into `~/Projects/` | `true` |
+| `project_indicator` | A string that is prepended to a github project in the list view, to disable leave blank. | `  ` |
 
 ### git configuration
 
