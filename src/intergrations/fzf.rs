@@ -44,11 +44,11 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
     if config.github().enabled() && !delete_mode {
         git_projects =
             intergrations::gh::get_gh_repos(&local_projects, config.general().projects_dir());
-        let _ = fzf.add_items(git_projects.clone()); // Ignoring output, as if the user selects a
-                                                     // project before this has loaded, then a
-                                                     // BrokenPipe error occurs because fzf has
-                                                     // closed... But we don't care about whether
-                                                     // this succeeds to not
+        let _ = fzf.add_items(
+            git_projects
+                .iter()
+                .map(|x| x.list_name(&config.github().project_indicator())),
+        );
     }
 
     let project = fzf.output().expect("Failed to get output");

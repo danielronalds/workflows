@@ -47,12 +47,16 @@ impl Repo {
     }
 
     /// Returns the name of the project, with an indicator if it's not local
-    pub fn list_name(&self) -> String {
+    ///
+    /// # Parameters
+    ///
+    /// - `indicator` The string shown before non-local projects
+    pub fn list_name(&self, indicator: &str) -> String {
         format!(
             "{}{}",
             match self.local {
                 true => "",
-                false => "  ",
+                false => indicator,
             },
             self.name()
         )
@@ -78,6 +82,6 @@ impl Repo {
 
 impl From<Repo> for String {
     fn from(value: Repo) -> Self {
-        value.list_name()
+        value.name()
     }
 }

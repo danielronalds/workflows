@@ -3,7 +3,7 @@ use crate::{intergrations, repo::Repo};
 
 /// Attempts to clone the git repo at the given url into the user's project folder
 pub fn git_clone(url: Option<String>, config: GeneralConfig) -> Option<Repo> {
-    intergrations::git::clone_repo(&url.clone()?, &config);
+    let _ = intergrations::git::clone_repo(&url.clone()?, &config);
 
     // Parsing the url
     let project_name = url?.split('/').last()?.replace(".git", "");
