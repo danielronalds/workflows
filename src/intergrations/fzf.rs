@@ -58,21 +58,20 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Rep
     let project_name = fzf.output().expect("Failed to get output");
 
     // Searching first without taking away the indicater prepend. Finds the project if it's local
-    let filtered_projects: Vec<Repo> = projects
+    let filtered_project = projects
         .iter()
         .filter(|x| x.name() == project_name)
         .map(|x| x.to_owned())
-        .collect();
+        .next();
 
-    let project = match filtered_projects.len() > 0 {
-        true => filtered_projects.get(0).expect("Checked get").to_owned(),
-        false => {
+    let project = match filtered_project {
+        Some(local_project) => local_project,
+        None => {
             // If the project is not found with the previous search, it's a remote project
             let trimmed_name = &project_name[config.github().project_indicator().len()..];
             projects
                 .iter()
-                .filter(|x| x.name() == trimmed_name)
-                .nth(0)
+                .find(|x| x.name() == trimmed_name)
                 .expect("No repo exists")
                 .to_owned()
         }
