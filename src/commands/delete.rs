@@ -15,18 +15,9 @@ use crate::repo::Repo;
 ///
 /// - `config` The user's config
 pub fn delete_project(config: WorkflowsConfig) -> io::Result<()> {
-    let (project, projects) =
-        intergrations::fzf::run_fzf(&config.fzf().delete_prompt(), true, &config);
+    let project = intergrations::fzf::run_fzf(&config.fzf().delete_prompt(), true, &config);
 
-    let selected_projects: Vec<Repo> = projects
-        .iter()
-        .filter(|x| x.name() == project)
-        .map(|x| x.to_owned())
-        .collect();
-
-    if let Some(selected_project) = selected_projects.get(0) {
-        delete_local_project(selected_project, config)?;
-    }
+    delete_local_project(&project, config)?;
 
     Ok(())
 }

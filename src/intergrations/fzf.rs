@@ -19,7 +19,7 @@ use crate::repo::Repo;
 ///
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
-pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (String, Vec<Repo>) {
+pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Repo {
     let fzf_config = config.fzf();
     let mut fzf = fzf_wrapped::Fzf::builder()
         .prompt(prompt)
@@ -33,8 +33,6 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
         .unwrap();
 
     fzf.run().expect("Failed to run fzf");
-
-    // NOTE: Experiment with colours for local projects and git projects
 
     let local_projects = commands::get_local_projects(config.general().projects_dir());
     fzf.add_items(local_projects.clone())
@@ -51,13 +49,34 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> (St
         );
     }
 
-    let project = fzf.output().expect("Failed to get output");
-
     let projects: Vec<Repo> = local_projects
         .iter()
         .chain(git_projects.iter())
         .map(|x| x.to_owned())
         .collect();
 
-    (project, projects)
+    let project_name = fzf.output().expect("Failed to get output");
+
+    // Searching first without taking away the indicater prepend. Finds the project if it's local
+    let filtered_projects: Vec<Repo> = projects
+        .iter()
+        .filter(|x| x.name() == project_name)
+        .map(|x| x.to_owned())
+        .collect();
+
+    let project = match filtered_projects.len() > 0 {
+        true => filtered_projects.get(0).expect("Checked get").to_owned(),
+        false => {
+            // If the project is not found with the previous search, it's a remote project
+            let trimmed_name = &project_name[config.github().project_indicator().len()..];
+            projects
+                .iter()
+                .filter(|x| x.name() == trimmed_name)
+                .nth(0)
+                .expect("No repo exists")
+                .to_owned()
+        }
+    };
+
+    project
 }
