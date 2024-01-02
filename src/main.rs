@@ -15,11 +15,6 @@ fn main() -> io::Result<()> {
         return commands::health_check();
     }
 
-    if args.contains(&"--version".to_string()) {
-        println!("workflows v{}", env!("CARGO_PKG_VERSION"));
-        return Ok(());
-    }
-
     if args.contains(&"--help".to_string()) || args.contains(&"-h".to_string()) {
         commands::show_help_dialog();
         return Ok(());
