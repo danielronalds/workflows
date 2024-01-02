@@ -20,6 +20,11 @@ fn main() -> io::Result<()> {
         return Ok(());
     }
 
+    if args.contains(&"--help".to_string()) || args.contains(&"-h".to_string()) {
+        commands::show_help_dialog();
+        return Ok(());
+    }
+
     let config = config::get_config().unwrap_or_default();
 
     if args.contains(&"--delete".to_string()) || args.contains(&"-d".to_string()) {

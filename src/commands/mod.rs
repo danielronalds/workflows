@@ -3,6 +3,9 @@
 // TODO: Add --generate-config flag for creating a default configuration
 // TODO: Add rename command
 
+mod help;
+pub use help::show_help_dialog;
+
 mod health;
 pub use health::health_check;
 
