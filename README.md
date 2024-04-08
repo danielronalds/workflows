@@ -76,6 +76,26 @@ detected.
 What commands are run with `tmuxinator` can be configured using 
 the config file.
 
+#### `--open` shortcut
+
+If you're visiting a particular project frequently, it might be helpful
+to have the shortcut in your recent terminal history. This isn't possible
+through the fzf interface, which is where the `--open` (or `-o`) command
+comes in.
+
+You can open a local project directly by supplying the projects name
+in full as an argument to the `--open` command:
+
+```console
+workflows --open workflows
+```
+
+The following also works:
+
+```console
+workflows -o workflows
+```
+
 ### Creating a project
 
 To create a project, run `workflows --new <project-name>`. This creates a
