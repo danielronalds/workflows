@@ -15,6 +15,7 @@ pub use delete::delete_project;
 mod open;
 pub use open::get_local_projects;
 pub use open::open_project;
+pub use open::open_specific_project;
 
 mod new;
 pub use new::new_project;

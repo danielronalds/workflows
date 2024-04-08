@@ -41,5 +41,12 @@ fn main() -> io::Result<()> {
         }
     }
 
+    if args.contains(&"--open".to_string()) || args.contains(&"-o".to_string()) {
+        let project = args.get(2).cloned();
+        if let Some(project_name) = project {
+            return commands::open_specific_project(project_name, config);
+        }
+    }
+
     commands::open_project(config)
 }

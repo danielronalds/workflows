@@ -30,6 +30,27 @@ pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
     Ok(())
 }
 
+/// Opens a local project with the given name
+///
+/// # Parameters
+///
+/// - `project_name` The name of the project to open
+/// - `config` The users config
+pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> io::Result<()> {
+    let project_name = project_name.trim();
+
+    let local_projects = get_local_projects(config.general().projects_dir());
+
+    let matching_project = local_projects.iter().filter(|x| x.name() == project_name).nth(0);
+
+    match matching_project {
+        Some(repo) => intergrations::tmuxinator::run_tmuxinator(repo, config.tmuxinator())?,
+        None => println!("Project not found in local projects folder!"),
+    }
+
+    Ok(())
+}
+
 /// Gets the projects currently in ~/Projects/
 ///
 /// # Parameters
