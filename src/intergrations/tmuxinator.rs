@@ -27,7 +27,13 @@ fn tmuxinator_config_dir() -> PathBuf {
 fn tmuxinator_project_exist(project: &Repo) -> bool {
     let config_filename = format!("{}.yml", project.name());
 
-    let configs = fs::read_dir(tmuxinator_config_dir())
+    let config_dir = tmuxinator_config_dir();
+
+    if !config_dir.exists() {
+        return false;
+    }
+
+    let configs = fs::read_dir(config_dir)
         .expect("Failed to read directory")
         .filter_map(|file| {
             let filename = file.ok()?.file_name();
@@ -49,10 +55,16 @@ fn tmuxinator_project_exist(project: &Repo) -> bool {
 pub fn create_tmuxinator_config(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
     let config_filename = format!("{}.yml", project.name());
 
+    let config_dir = tmuxinator_config_dir();
+
+    if !config_dir.exists() {
+        fs::create_dir_all(&config_dir)?;
+    }
+
     let contents = get_config_contents(project, config);
 
     fs::write(
-        tmuxinator_config_dir().join(config_filename),
+        config_dir.join(config_filename),
         contents.trim(),
     )?;
 
