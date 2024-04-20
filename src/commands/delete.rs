@@ -17,7 +17,9 @@ use crate::repo::Repo;
 pub fn delete_project(config: WorkflowsConfig) -> io::Result<()> {
     let project = intergrations::fzf::run_fzf(&config.fzf().delete_prompt(), true, &config);
 
-    delete_local_project(&project, config)?;
+    if let Some(project) = project {
+        delete_local_project(&project, config)?;
+    }
 
     Ok(())
 }

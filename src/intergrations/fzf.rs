@@ -19,7 +19,7 @@ use crate::repo::Repo;
 ///
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
-pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Repo {
+pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Option<Repo> {
     let fzf_config = config.fzf();
     let mut fzf = fzf_wrapped::Fzf::builder()
         .prompt(prompt)
@@ -57,6 +57,10 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Rep
 
     let project_name = fzf.output().expect("Failed to get output");
 
+    if project_name.is_empty() {
+        return None;
+    }
+
     // Searching first without taking away the indicater prepend. Finds the project if it's local
     let filtered_project = projects
         .iter()
@@ -77,5 +81,5 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Rep
         }
     };
 
-    project
+    Some(project)
 }

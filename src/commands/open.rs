@@ -12,20 +12,22 @@ use crate::repo::Repo;
 pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
     let selected_project = intergrations::fzf::run_fzf(&config.fzf().open_prompt(), false, &config);
 
-    if !selected_project.local() {
-        if config.github().confirm_cloning()
-            && !casual::prompt("Project is not local, clone it to ~/Projects/?")
-                .suffix(" [Y/n] ")
-                .default("y".to_string())
-                .matches(|s| matches!(&*s.trim().to_lowercase(), "n" | "no" | "y" | "yes"))
-                .map(|s| matches!(&*s.to_lowercase(), "y" | "yes"))
-        {
-            return Ok(());
+    if let Some(selected_project) = selected_project {
+        if !selected_project.local() {
+            if config.github().confirm_cloning()
+                && !casual::prompt("Project is not local, clone it to ~/Projects/?")
+                    .suffix(" [Y/n] ")
+                    .default("y".to_string())
+                    .matches(|s| matches!(&*s.trim().to_lowercase(), "n" | "no" | "y" | "yes"))
+                    .map(|s| matches!(&*s.to_lowercase(), "y" | "yes"))
+            {
+                return Ok(());
+            }
+            intergrations::gh::clone_repo(&selected_project, config.general().projects_dir())?;
         }
-        intergrations::gh::clone_repo(&selected_project, config.general().projects_dir())?;
-    }
 
-    intergrations::tmuxinator::run_tmuxinator(&selected_project, config.tmuxinator())?;
+        intergrations::tmuxinator::run_tmuxinator(&selected_project, config.tmuxinator())?;
+    }
 
     Ok(())
 }
@@ -41,7 +43,10 @@ pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> i
 
     let local_projects = get_local_projects(config.general().projects_dir());
 
-    let matching_project = local_projects.iter().filter(|x| x.name() == project_name).nth(0);
+    let matching_project = local_projects
+        .iter()
+        .filter(|x| x.name() == project_name)
+        .nth(0);
 
     match matching_project {
         Some(repo) => intergrations::tmuxinator::run_tmuxinator(repo, config.tmuxinator())?,
