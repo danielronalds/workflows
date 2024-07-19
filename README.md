@@ -136,6 +136,7 @@ default configuration is used
 ```toml
 [general]
 programs_dir="Projects/"
+open_new_projects=true
 
 [fzf]
 layout="default"
@@ -166,6 +167,7 @@ start_commands=["nvim ."]
 | Option | Purpose | Default Value |
 | ------ | ------- | ------------- |
 | `projects_dir` | Where `workflows` should look for projects. Path is relative to $HOME | `"Projects/"` |
+| `open_new_projects` | Whether projects should be opened after they have been created with `--create` | `true` |
 
 ### fzf configuration
 
