@@ -30,7 +30,13 @@ fn main() -> io::Result<()> {
         let project = commands::new_project(args.get(2).cloned(), config.general())?;
         if let Some(project) = project {
             let project = repo::Repo::new(project, true, config.general().projects_dir());
-            return intergrations::tmuxinator::run_tmuxinator(&project, config.tmuxinator());
+
+            println!("Project {} created successfully!", project.name());
+
+            return match config.general().open_new_projects() {
+                true => intergrations::tmuxinator::run_tmuxinator(&project, config.tmuxinator()),
+                false => Ok(()),
+            }
         }
     }
 
