@@ -36,7 +36,7 @@ fn main() -> io::Result<()> {
             return match config.general().open_new_projects() {
                 true => intergrations::tmuxinator::run_tmuxinator(&project, config.tmuxinator()),
                 false => Ok(()),
-            }
+            };
         }
     }
 

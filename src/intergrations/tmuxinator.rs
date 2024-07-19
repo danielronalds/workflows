@@ -63,10 +63,7 @@ pub fn create_tmuxinator_config(project: &Repo, config: TmuxinatorConfig) -> io:
 
     let contents = get_config_contents(project, config);
 
-    fs::write(
-        config_dir.join(config_filename),
-        contents.trim(),
-    )?;
+    fs::write(config_dir.join(config_filename), contents.trim())?;
 
     Ok(())
 }

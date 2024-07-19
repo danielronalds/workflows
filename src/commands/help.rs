@@ -1,6 +1,7 @@
 /// Displays the help dialog to stdout
 pub fn show_help_dialog() {
-    let help_dialog = format!("\
+    let help_dialog = format!(
+        "\
 workflows v{}
 
 A cli tool for creating a seemless workflow with remote and local git repos.
@@ -15,7 +16,8 @@ Commands
   --health         Checks that workflows can access the required programs
   --help      -h   Show this dialog
 ",
-env!("CARGO_PKG_VERSION"));
+        env!("CARGO_PKG_VERSION")
+    );
 
     println!("{}", help_dialog);
 }

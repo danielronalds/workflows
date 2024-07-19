@@ -29,7 +29,10 @@ impl GeneralConfig {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{general::{DEFAULT_PROJECTS_DIR, DEFAULT_OPEN_NEW_PROJECTS}, WorkflowsConfig};
+    use crate::config::{
+        general::{DEFAULT_OPEN_NEW_PROJECTS, DEFAULT_PROJECTS_DIR},
+        WorkflowsConfig,
+    };
 
     #[test]
     fn projects_dir_works() {

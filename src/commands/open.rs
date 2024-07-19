@@ -44,9 +44,7 @@ pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> i
     let local_projects = get_local_projects(config.general().projects_dir());
 
     let matching_project = local_projects
-        .iter()
-        .filter(|x| x.name() == project_name)
-        .nth(0);
+        .iter().find(|x| x.name() == project_name);
 
     match matching_project {
         Some(repo) => intergrations::tmuxinator::run_tmuxinator(repo, config.tmuxinator())?,
