@@ -25,7 +25,7 @@ pub fn new_project(
         fs::create_dir_all(&project_dir)?;
 
         let template = get_template(config);
-        run_template(template, project_dir)?;
+        run_template(template, &project_name, project_dir)?;
 
         return Ok(Some(project_name));
     }
@@ -38,12 +38,13 @@ pub fn new_project(
 /// # Parameters
 ///
 /// - `template` The templae to execute
+/// - `project_name` The name of the project being created
 /// - `project_dir` The directory the project is in, e.g. `~/Projects/workflows`
 ///
 /// # Returns
 ///
 /// An IO result
-fn run_template(template: Option<WorkspaceTemplate>, project_dir: PathBuf) -> io::Result<()> {
+fn run_template(template: Option<WorkspaceTemplate>, project_name: &str, project_dir: PathBuf) -> io::Result<()> {
     if template.is_none() {
         return Ok(());
     }
@@ -55,6 +56,7 @@ fn run_template(template: Option<WorkspaceTemplate>, project_dir: PathBuf) -> io
         let output = Command::new("sh")
             .arg("-c")
             .current_dir(&project_dir)
+            .env("WORKFLOWS_PROJECT_NAME", project_name)
             .arg(command)
             .output()?;
 
