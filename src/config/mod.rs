@@ -18,6 +18,9 @@ use fzf::FzfConfig;
 pub mod git;
 use git::GitConfig;
 
+pub mod templates;
+use templates::WorkspaceTemplate;
+
 /// Attempt to read the config file located at either of the following two paths:
 ///
 /// - ~/.workflows.toml
@@ -44,6 +47,7 @@ pub fn get_config() -> Option<WorkflowsConfig> {
 #[serde(default)]
 pub struct WorkflowsConfig {
     general: Option<GeneralConfig>,
+    templates: Option<Vec<WorkspaceTemplate>>,
     github: Option<GithubConfig>,
     git: Option<GitConfig>,
     tmuxinator: Option<TmuxinatorConfig>,
@@ -54,6 +58,11 @@ impl WorkflowsConfig {
     /// Returns the [`GeneralConfig`] preferences in the config
     pub fn general(&self) -> GeneralConfig {
         self.general.clone().unwrap_or_default()
+    }
+
+    /// Returns the [`TemplatesConfig`] preferences in the config
+    pub fn templates(&self) -> Vec<WorkspaceTemplate> {
+        self.templates.clone().unwrap_or_default()
     }
 
     /// Returns the [`FzfConfig`] preferences in the config

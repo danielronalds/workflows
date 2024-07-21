@@ -2,8 +2,12 @@
 //!
 //! Heavily based on the [rust_fzf library](https://crates.io/crates/rust_fzf)
 
+use fzf_wrapped::{FzfBuilder, Fzf};
+
 use crate::commands;
 use crate::config::WorkflowsConfig;
+use crate::config::fzf::FzfConfig;
+use crate::config::templates::WorkspaceTemplate;
 use crate::intergrations;
 use crate::repo::Repo;
 
@@ -20,17 +24,7 @@ use crate::repo::Repo;
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
 pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Option<Repo> {
-    let fzf_config = config.fzf();
-    let mut fzf = fzf_wrapped::Fzf::builder()
-        .prompt(prompt)
-        .pointer(fzf_config.pointer())
-        .color(fzf_config.theme())
-        .border(fzf_config.border())
-        .ansi(true)
-        .layout(fzf_config.layout())
-        .border_label(fzf_config.border_label())
-        .build()
-        .unwrap();
+    let mut fzf = get_fzf_instance(prompt, config.fzf());
 
     fzf.run().expect("Failed to run fzf");
 
@@ -82,4 +76,56 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Opt
     };
 
     Some(project)
+}
+
+/// Prompts the user to select a template
+///
+/// # Parameters
+///
+/// - `config` The user's config
+///
+/// # Returns
+///
+/// `None` if the user doesn't have any templates or selects blank
+pub fn get_template(config: WorkflowsConfig) -> Option<WorkspaceTemplate> {
+    let templates = config.templates();
+
+    if templates.len() == 0 {
+        return None;
+    }
+
+    let mut template_names: Vec<&str> = templates.iter().map(|x| x.name()).collect();
+    template_names.push("Blank");
+
+    let fzf = get_fzf_instance("Select a template: ", config.fzf());
+
+    let selected_template = fzf_wrapped::run_with_output(fzf, template_names)?;
+
+    match selected_template == "Blank" {
+        true => None,
+        false => templates.iter().find(|x| x.name() == selected_template).cloned()
+    }
+}
+
+/// Gets the users Fzf instance, as defined by their config
+///
+/// # Parameters
+///
+/// - `prompt` The prompt for fzf to have
+/// - `config` The user's definied fzf config
+///
+/// # Returns
+///
+/// An [`Fzf`] instance
+fn get_fzf_instance(prompt: impl Into<String>, config: FzfConfig) -> Fzf {
+    fzf_wrapped::Fzf::builder()
+        .prompt(prompt)
+        .pointer(config.pointer())
+        .color(config.theme())
+        .border(config.border())
+        .ansi(true)
+        .layout(config.layout())
+        .border_label(config.border_label())
+        .build()
+        .unwrap()
 }

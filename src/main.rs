@@ -27,7 +27,7 @@ fn main() -> io::Result<()> {
     }
 
     if args.contains(&"--new".to_string()) || args.contains(&"-n".to_string()) {
-        let project = commands::new_project(args.get(2).cloned(), config.general())?;
+        let project = commands::new_project(args.get(2).cloned(), config.clone())?;
         if let Some(project) = project {
             let project = repo::Repo::new(project, true, config.general().projects_dir());
 
