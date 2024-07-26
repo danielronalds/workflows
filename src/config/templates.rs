@@ -24,11 +24,11 @@ mod tests {
     #[test]
     fn templates_works() {
         let toml = "\
-                    [[templates]]\n\
+                    [[template]]\n\
                     name = 'rust'\n\
                     commands = ['cargo init']\n\
                     \n\
-                    [[templates]]\n\
+                    [[template]]\n\
                     name = 'go'\n\
                     commands = ['go mod init']";
 

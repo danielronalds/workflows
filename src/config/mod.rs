@@ -47,7 +47,7 @@ pub fn get_config() -> Option<WorkflowsConfig> {
 #[serde(default)]
 pub struct WorkflowsConfig {
     general: Option<GeneralConfig>,
-    templates: Option<Vec<WorkspaceTemplate>>,
+    template: Option<Vec<WorkspaceTemplate>>,
     github: Option<GithubConfig>,
     git: Option<GitConfig>,
     tmuxinator: Option<TmuxinatorConfig>,
@@ -62,7 +62,7 @@ impl WorkflowsConfig {
 
     /// Returns the [`TemplatesConfig`] preferences in the config
     pub fn templates(&self) -> Vec<WorkspaceTemplate> {
-        self.templates.clone().unwrap_or_default()
+        self.template.clone().unwrap_or_default()
     }
 
     /// Returns the [`FzfConfig`] preferences in the config
