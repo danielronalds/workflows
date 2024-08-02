@@ -104,6 +104,40 @@ directory with the name of the project in the projects directory. A
 
 The command `--new` can be exchanged for the shorthand `-n`.
 
+#### Templates
+
+When creating a project, you'll often want to use some kind of
+CLI generation tool, e.g. `cargo init`. Using templates, this
+can be done when a project is created.
+
+Templates define a series of commands to be run upon a project's
+creation using the `--new` command. For example, if you wanted
+a template that scaffolded a cargo binary project, the template
+in your config file would look like the following:
+
+```toml
+[[template]]
+name="Rust Binary"
+commands=["cargo init --bin"]
+```
+
+##### Using the project name
+
+When templates are run, the projects name is stored in an
+environment variable, `WORKFLOWS_PROJECT_NAME`. This can
+be used for templates that require knowledge of the projects
+name to scaffold it, such as creating a Go project:
+
+``` toml
+[[template]]
+name="Go Project"
+commands=[
+  "go mod init github.com/danielronalds/$WORKFLOWS_PROJECT_NAME",
+  "git init",
+  "git branch -m main"
+]
+```
+
 ### Deleting a project
 
 To delete a project, run `workflows --delete`. You'll be greeted 
