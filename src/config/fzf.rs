@@ -12,6 +12,11 @@ const DEFAULT_DELETE_PROMPT: &str = "Delete: ";
 
 const DEFAULT_POINTER: &str = ">";
 
+/// The default prompt for selecting a template
+const DEFAULT_TEMPLATE_PROMPT: &str = "Select a template: ";
+/// What the option for selecting no template is called
+const DEFAULT_NO_TEMPLATE_OPTION: &str = "No Template";
+
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 pub struct FzfConfig {
     /// What layout fzf should use
@@ -46,6 +51,16 @@ pub struct FzfConfig {
 
     /// The colours fzf should use, same as
     theme: Option<String>,
+
+    /// The default prompt for selecting a template
+    ///
+    /// Default: `"Select a template: "`
+    template_prompt: Option<String>,
+
+    /// What the option for selecting no template is called
+    ///
+    /// Default: `"No Template"`
+    no_template_option: Option<String>,
 }
 
 impl FzfConfig {
@@ -105,6 +120,24 @@ impl FzfConfig {
             Some(color) => Color::from(color),
             None => Color::default(),
         }
+    }
+
+    /// The default prompt for selecting a template
+    ///
+    /// Default: `"Select a template: "`
+    pub fn template_prompt(&self) -> String {
+        self.template_prompt
+            .clone()
+            .unwrap_or(DEFAULT_TEMPLATE_PROMPT.to_string())
+    }
+
+    /// What the option for selecting no template is called
+    ///
+    /// Default: `"No Template"`
+    pub fn no_template_option(&self) -> String {
+        self.no_template_option
+            .clone()
+            .unwrap_or(DEFAULT_NO_TEMPLATE_OPTION.to_string())
     }
 }
 
