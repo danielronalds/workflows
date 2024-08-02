@@ -2,12 +2,12 @@
 //!
 //! Heavily based on the [rust_fzf library](https://crates.io/crates/rust_fzf)
 
-use fzf_wrapped::{FzfBuilder, Fzf};
+use fzf_wrapped::Fzf;
 
 use crate::commands;
-use crate::config::WorkflowsConfig;
 use crate::config::fzf::FzfConfig;
 use crate::config::templates::WorkspaceTemplate;
+use crate::config::WorkflowsConfig;
 use crate::intergrations;
 use crate::repo::Repo;
 
@@ -89,21 +89,25 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Opt
 /// `None` if the user doesn't have any templates or selects blank
 pub fn get_template(config: WorkflowsConfig) -> Option<WorkspaceTemplate> {
     let templates = config.templates();
+    let fzf_config = config.fzf();
 
     if templates.len() == 0 {
         return None;
     }
 
-    let mut template_names: Vec<&str> = templates.iter().map(|x| x.name()).collect();
-    template_names.push("Blank");
+    let mut template_names: Vec<String> = templates.iter().map(|x| x.name().to_string()).collect();
+    template_names.push(fzf_config.no_template_option());
 
-    let fzf = get_fzf_instance("Select a template: ", config.fzf());
+    let fzf = get_fzf_instance(fzf_config.template_prompt(), config.fzf());
 
     let selected_template = fzf_wrapped::run_with_output(fzf, template_names)?;
 
-    match selected_template == "Blank" {
+    match selected_template == fzf_config.no_template_option() {
         true => None,
-        false => templates.iter().find(|x| x.name() == selected_template).cloned()
+        false => templates
+            .iter()
+            .find(|x| x.name() == selected_template)
+            .cloned(),
     }
 }
 
