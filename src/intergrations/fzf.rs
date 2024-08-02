@@ -91,7 +91,7 @@ pub fn get_template(config: WorkflowsConfig) -> Option<WorkspaceTemplate> {
     let templates = config.templates();
     let fzf_config = config.fzf();
 
-    if templates.len() == 0 {
+    if templates.is_empty() {
         return None;
     }
 
