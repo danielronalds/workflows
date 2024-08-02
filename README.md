@@ -180,6 +180,8 @@ open_prompt="Open: "
 delete_prompt="Delete: "
 pointer=">"
 theme="dark"
+template_prompt="Select a template: "
+no_template_option="No Template"
 
 [github]
 enabled=true
@@ -214,6 +216,8 @@ start_commands=["nvim ."]
 | `delete_prompt` | The prompt fzf should show when deleteing a project | `"Delete: " ` |
 | `pointer` | The pointer to the current item in fzf | `">"` |
 | `theme` | The theme to use with fzf. Options include: `dark`, `light`, `16`, `bw` | `"dark"` |
+| template_prompt | The default prompt for selecting a template | `"Select a template: "` |
+| no_template_option | What the option for selecting no template is called | `"No Template"` |
 
 ### github configuration
 
