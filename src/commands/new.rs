@@ -44,7 +44,11 @@ pub fn new_project(
 /// # Returns
 ///
 /// An IO result
-fn run_template(template: Option<WorkspaceTemplate>, project_name: &str, project_dir: PathBuf) -> io::Result<()> {
+fn run_template(
+    template: Option<WorkspaceTemplate>,
+    project_name: &str,
+    project_dir: PathBuf,
+) -> io::Result<()> {
     if template.is_none() {
         return Ok(());
     }

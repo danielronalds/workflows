@@ -19,7 +19,7 @@ impl WorkspaceTemplate {
 
 #[cfg(test)]
 mod tests {
-    use crate::config::{WorkflowsConfig, templates::WorkspaceTemplate};
+    use crate::config::{templates::WorkspaceTemplate, WorkflowsConfig};
 
     #[test]
     fn templates_works() {
@@ -42,7 +42,7 @@ mod tests {
             WorkspaceTemplate {
                 name: "go".to_string(),
                 commands: vec!["go mod init".to_string()],
-            }
+            },
         ];
 
         assert_eq!(config.templates(), wanted);
