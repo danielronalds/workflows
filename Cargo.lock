@@ -154,9 +154,9 @@ checksum = "3f9eec918d3f24069decb9af1554cad7c880e2da24a9afd88aca000531ab82c1"
 
 [[package]]
 name = "fzf-wrapped"
-version = "0.1.3"
+version = "0.1.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e3d1ce62de932f1c2c13852521b8dd36dd75ff83f9199f90f8f2839c7b7c0e06"
+checksum = "b6c61a44d13f57f2bb4c181a380dbb2e0367d1af53ca6721b5c9fc6b9c7e345d"
 dependencies = [
  "derive_builder",
 ]

@@ -16,7 +16,7 @@ categories=["command-line-utilities","filesystem"]
 casual = "0.2.0"
 colored = "2.0.4"
 dirs = "5.0.1"
-fzf-wrapped = "0.1.3"
+fzf-wrapped = "0.1.4"
 serde = { version = "1.0.190", features = ["derive"] }
 toml = "0.8.6"
 which = "5.0.0"
