@@ -149,6 +149,14 @@ With confirmation the project will be deleted.
 Deleting using `workflows --delete` deletes the tmuxinator config 
 as well as the project in the projects directory.
 
+#### Deleting a known project
+
+If you know the exact name of the project you're wanting to
+delete, you can also use `workflows --delete <PROJECT_NAME>`.
+
+For example, if you wanted to delete a project called `test-proj`,
+you could run `workflows --delete test-proj`. This bypasses fzf.
+
 ### Cloning a project
 
 Workflows can also be used to clone git repos using `workflows --clone`,
