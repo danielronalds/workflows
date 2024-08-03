@@ -9,12 +9,32 @@ use crate::config::WorkflowsConfig;
 use crate::intergrations::{self, git::PushedResult};
 use crate::repo::Repo;
 
-/// Runs fzf with only local projects, and deletes the selected one
+use super::get_local_projects;
+
+/// Runs fzf with only local projects, and deletes the selected one.
+///
+/// If the user passes in a project name that is valid, fzf is not launched.
 ///
 /// # Parameters
 ///
+/// - `project` The passed in project from a parameter
 /// - `config` The user's config
-pub fn delete_project(config: WorkflowsConfig) -> io::Result<()> {
+pub fn delete_project(project: Option<String>, config: WorkflowsConfig) -> io::Result<()> {
+    // User has passed in a project with an argument
+    if let Some(project) = project {
+        let local_projects = get_local_projects(config.general().projects_dir());
+
+        let local_repo = local_projects.iter().find(|x| x.name() == project);
+
+        return match local_repo {
+            None => {
+                eprintln!("No project named {} could be found!", project.bold());
+                Ok(())
+            }
+            Some(repo) => delete_local_project(repo, config),
+        };
+    }
+
     let project = intergrations::fzf::run_fzf(&config.fzf().delete_prompt(), true, &config);
 
     if let Some(project) = project {

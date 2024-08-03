@@ -23,7 +23,8 @@ fn main() -> io::Result<()> {
     let config = config::get_config().unwrap_or_default();
 
     if args.contains(&"--delete".to_string()) || args.contains(&"-d".to_string()) {
-        return commands::delete_project(config);
+        let project = args.get(2).cloned();
+        return commands::delete_project(project, config);
     }
 
     if args.contains(&"--new".to_string()) || args.contains(&"-n".to_string()) {
