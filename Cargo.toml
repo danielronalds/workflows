@@ -1,6 +1,6 @@
 [package]
 name = "workflows"
-version = "0.5.1"
+version = "0.6.0"
 authors=["Daniel Ronalds"]
 edition = "2021"
 description="A cli tool for creating a seemless workflow with remote and local git repos"
