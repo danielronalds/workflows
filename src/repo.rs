@@ -10,7 +10,7 @@ pub struct Repo {
     /// Whether the project is local or not
     local: bool,
     /// The path to the projects directory
-    project_dir: String,
+    project_dir: Option<String>,
 }
 
 impl PartialEq for Repo {
@@ -31,9 +31,11 @@ impl Repo {
     /// # Returns
     ///
     /// A Repo struct
-    pub fn new<T: Into<String>>(name: T, local: bool, project_dir: T) -> Self {
+    pub fn new<T: Into<String>>(name: T, local: bool, project_dir: Option<T>) -> Self {
         let name = name.into();
-        let project_dir = project_dir.into();
+
+        let project_dir = project_dir.map(|project_dir| project_dir.into());
+
         Self {
             name,
             local,
@@ -72,11 +74,12 @@ impl Repo {
     /// # Returns
     ///
     /// A path buf to ~/<project_dir>/<projectname>
-    pub fn get_project_root(&self) -> PathBuf {
-        dirs::home_dir()
-            .expect("Couldn't get home directory")
-            .join(self.project_dir.as_str())
-            .join(format!("{}/", self.name))
+    pub fn get_project_root(&self) -> Option<PathBuf> {
+        let project_root = dirs::home_dir()?
+            .join(self.project_dir.clone()?)
+            .join(format!("{}/", self.name));
+
+        Some(project_root)
     }
 }
 

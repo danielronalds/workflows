@@ -28,14 +28,13 @@ pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Opt
 
     fzf.run().expect("Failed to run fzf");
 
-    let local_projects = commands::get_local_projects(config.general().projects_dir());
+    let local_projects = commands::get_local_projects(config.general().projects_dirs());
     fzf.add_items(local_projects.clone())
         .expect("Failed to add local repos");
 
     let mut git_projects = vec![];
     if config.github().enabled() && !delete_mode {
-        git_projects =
-            intergrations::gh::get_gh_repos(&local_projects, config.general().projects_dir());
+        git_projects = intergrations::gh::get_gh_repos(&local_projects);
         let _ = fzf.add_items(
             git_projects
                 .iter()
@@ -109,6 +108,27 @@ pub fn get_template(config: WorkflowsConfig) -> Option<WorkspaceTemplate> {
             .find(|x| x.name() == selected_template)
             .cloned(),
     }
+}
+
+/// Gets the users selected project directory. If there is only one option, then fzf is skipped
+///
+/// # Parameters
+///
+/// - `config` The user's config
+///
+/// # Returns
+///
+/// `None` if the user doesn't select a directory
+pub fn get_project_dir(config: &WorkflowsConfig) -> Option<String> {
+    let projects_dirs = config.general().projects_dirs();
+
+    if projects_dirs.len() == 1 {
+        return Some(projects_dirs[0].clone());
+    }
+
+    let fzf = get_fzf_instance("Select a Project: ", config.fzf());
+
+    fzf_wrapped::run_with_output(fzf, projects_dirs)
 }
 
 /// Gets the users Fzf instance, as defined by their config

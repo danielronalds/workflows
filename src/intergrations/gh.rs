@@ -36,7 +36,7 @@ pub fn clone_repo(repo: &Repo, project_dir: String) -> io::Result<()> {
 /// # Returns
 ///
 /// A vec of repo structs
-pub fn get_gh_repos(local_projects: &[Repo], project_dir: String) -> Vec<Repo> {
+pub fn get_gh_repos(local_projects: &[Repo]) -> Vec<Repo> {
     let output = Command::new("gh")
         .args(["repo", "list", "--limit", "1000"])
         .output()
@@ -57,7 +57,7 @@ pub fn get_gh_repos(local_projects: &[Repo], project_dir: String) -> Vec<Repo> {
             .iter()
             .filter_map(|repo_string| {
                 let name = repo_string.split('/').nth(1);
-                name.map(|name| Repo::new(name, false, &project_dir))
+                name.map(|name| Repo::new(name, false, None))
             })
             .filter(|repo| !repo.name().is_empty() && !local_projects.contains(repo))
             .collect();

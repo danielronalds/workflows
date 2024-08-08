@@ -29,8 +29,8 @@ fn main() -> io::Result<()> {
 
     if args.contains(&"--new".to_string()) || args.contains(&"-n".to_string()) {
         let project = commands::new_project(args.get(2).cloned(), config.clone())?;
-        if let Some(project) = project {
-            let project = repo::Repo::new(project, true, config.general().projects_dir());
+        if let Some((project, project_dir)) = project {
+            let project = repo::Repo::new(project, true, Some(project_dir));
 
             println!("Project {} created successfully!", project.name());
 
@@ -42,7 +42,7 @@ fn main() -> io::Result<()> {
     }
 
     if args.contains(&"--clone".to_string()) || args.contains(&"-c".to_string()) {
-        let repo = commands::git_clone(args.get(2).cloned(), config.general());
+        let repo = commands::git_clone(args.get(2).cloned(), &config);
         if let Some(repo) = repo {
             return intergrations::tmuxinator::run_tmuxinator(&repo, config.tmuxinator());
         }

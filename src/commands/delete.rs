@@ -22,7 +22,7 @@ use super::get_local_projects;
 pub fn delete_project(project: Option<String>, config: WorkflowsConfig) -> io::Result<()> {
     // User has passed in a project with an argument
     if let Some(project) = project {
-        let local_projects = get_local_projects(config.general().projects_dir());
+        let local_projects = get_local_projects(config.general().projects_dirs());
 
         let local_repo = local_projects.iter().find(|x| x.name() == project);
 
@@ -113,6 +113,8 @@ fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> 
 ///
 /// - `project` The project to delete
 fn delete_project_dir(project: &Repo) -> io::Result<()> {
-    fs::remove_dir_all(project.get_project_root())?;
-    Ok(())
+    match project.get_project_root() {
+        Some(project_root) => fs::remove_dir_all(project_root),
+        None => Ok(()),
+    }
 }

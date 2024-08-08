@@ -7,7 +7,7 @@ const DEFAULT_OPEN_NEW_PROJECTS: bool = true;
 #[derive(Debug, Clone, Default, Deserialize, PartialEq, Eq)]
 pub struct GeneralConfig {
     /// Where projects should be stored, relative path from the user's home
-    projects_dir: Option<String>,
+    projects_dirs: Option<Vec<String>>,
 
     /// Whether projects should be opened after they're created
     open_new_projects: Option<bool>,
@@ -15,10 +15,10 @@ pub struct GeneralConfig {
 
 impl GeneralConfig {
     /// Where projects should be stored, relative path from the user's home
-    pub fn projects_dir(&self) -> String {
-        self.projects_dir
+    pub fn projects_dirs(&self) -> Vec<String> {
+        self.projects_dirs
             .clone()
-            .unwrap_or(DEFAULT_PROJECTS_DIR.to_string())
+            .unwrap_or(vec![DEFAULT_PROJECTS_DIR.to_string()])
     }
 
     /// Whether projects should be opened after they're created
@@ -38,11 +38,14 @@ mod tests {
     fn projects_dir_works() {
         let toml = "\
 [general]
-projects_dir = 'Testing'";
+projects_dirs = ['Testing']";
 
         let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
 
-        assert_eq!(config.general().projects_dir, Some("Testing".to_string()))
+        assert_eq!(
+            config.general().projects_dirs,
+            Some(vec!["Testing".to_string()])
+        )
     }
 
     #[test]
@@ -51,11 +54,25 @@ projects_dir = 'Testing'";
 
         let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
 
-        assert_eq!(config.general.clone().unwrap().projects_dir, None);
+        assert_eq!(config.general.clone().unwrap().projects_dirs, None);
 
         assert_eq!(
-            config.general().projects_dir(),
-            DEFAULT_PROJECTS_DIR.to_string()
+            config.general().projects_dirs(),
+            vec![DEFAULT_PROJECTS_DIR.to_string()]
+        )
+    }
+
+    #[test]
+    fn multiple_projects_dirs_works() {
+        let toml = "\
+[general]
+projects_dirs = ['Projects/', '.config/']";
+
+        let config: WorkflowsConfig = toml::from_str(toml).expect("Failed to unwrap toml");
+
+        assert_eq!(
+            config.general().projects_dirs,
+            Some(vec!["Projects/".to_string(), ".config/".to_string()])
         )
     }
 
