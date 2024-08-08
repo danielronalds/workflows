@@ -88,7 +88,8 @@ windows:",
             .expect("Failed to cast pathbuf to string"),
         project.name(),
         project
-            .get_project_root().expect("Failed to get the projects root")
+            .get_project_root()
+            .expect("Failed to get the projects root")
             .to_str()
             .expect("Failed to cast pathbuf to string"),
     );
@@ -186,7 +187,8 @@ windows:
                     .expect("Failed to cast pathbuf to string"),
                 project.name(),
                 project
-                    .get_project_root().unwrap()
+                    .get_project_root()
+                    .unwrap()
                     .to_str()
                     .expect("Failed to cast pathbuf to string"),
             )
@@ -223,7 +225,8 @@ windows:
                     .expect("Failed to cast pathbuf to string"),
                 project.name(),
                 project
-                    .get_project_root().unwrap()
+                    .get_project_root()
+                    .unwrap()
                     .to_str()
                     .expect("Failed to cast pathbuf to string"),
                 DEFAULT_START_COMMAND

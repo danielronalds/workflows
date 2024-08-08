@@ -39,7 +39,9 @@ pub fn clone_repo(url: &str, config: &WorkflowsConfig) -> io::Result<String> {
 ///
 /// Always returns false if the user is not connected to the internet
 pub fn repo_pushed(repo: &Repo) -> io::Result<PushedResult> {
-    let repo_dir = repo.get_project_root().expect("Failed to get the projects root");
+    let repo_dir = repo
+        .get_project_root()
+        .expect("Failed to get the projects root");
 
     let output = Command::new("git")
         .current_dir(repo_dir)
@@ -58,7 +60,9 @@ pub fn repo_pushed(repo: &Repo) -> io::Result<PushedResult> {
 
 /// Checks if the repo has a clean working tree
 pub fn repo_clean_tree(repo: &Repo) -> io::Result<bool> {
-    let repo_dir = repo.get_project_root().expect("Failed to get the project root");
+    let repo_dir = repo
+        .get_project_root()
+        .expect("Failed to get the project root");
 
     let output = Command::new("git")
         .current_dir(repo_dir)

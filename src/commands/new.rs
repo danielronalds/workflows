@@ -9,7 +9,7 @@ use colored::Colorize;
 
 use crate::{
     config::{templates::WorkspaceTemplate, WorkflowsConfig},
-    intergrations::fzf::{get_template, get_project_dir},
+    intergrations::fzf::{get_project_dir, get_template},
 };
 
 /// Creates a new project in the selected project directory
@@ -30,7 +30,7 @@ pub fn new_project(
     if let Some(project_name) = project_name {
         let projects_dir = match get_project_dir(&config) {
             Some(projects_dir) => projects_dir,
-            None => return Ok(None)
+            None => return Ok(None),
         };
 
         let project_dir = dirs::home_dir()

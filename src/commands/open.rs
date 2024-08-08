@@ -29,10 +29,9 @@ pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
                 Some(project_dir) => {
                     intergrations::gh::clone_repo(&selected_project, project_dir.clone())?;
                     selected_project.set_project_dir(Some(project_dir));
-                },
+                }
                 None => return Ok(()),
             }
-            
         }
 
         intergrations::tmuxinator::run_tmuxinator(&selected_project, config.tmuxinator())?;
@@ -75,7 +74,7 @@ pub fn get_local_projects(project_dirs: Vec<String>) -> Vec<Repo> {
     let home = dirs::home_dir().expect("Couldn't load home directory!");
 
     let mut local_repos = vec![];
-    
+
     for project_dir in project_dirs {
         let entries = match fs::read_dir(home.join(&project_dir)) {
             Ok(entries) => entries,

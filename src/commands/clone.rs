@@ -8,9 +8,5 @@ pub fn git_clone(url: Option<String>, config: &WorkflowsConfig) -> Option<Repo> 
     // Parsing the url
     let project_name = url?.split('/').last()?.replace(".git", "");
 
-    Some(Repo::new(
-        project_name,
-        true,
-        Some(project_dir),
-    ))
+    Some(Repo::new(project_name, true, Some(project_dir)))
 }

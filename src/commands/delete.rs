@@ -51,12 +51,8 @@ pub fn delete_project(project: Option<String>, config: WorkflowsConfig) -> io::R
 /// - `repo`   The project to delete
 /// - `config` The user's config
 fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
-    let binding = repo
-        .get_project_root()
-        .expect("Failed to get project root");
-    let project_root = binding
-        .to_str()
-        .expect("Failed to get str");
+    let binding = repo.get_project_root().expect("Failed to get project root");
+    let project_root = binding.to_str().expect("Failed to get str");
 
     println!("Deleting project located at {}\n", project_root.bold());
 
