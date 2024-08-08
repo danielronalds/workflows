@@ -89,6 +89,7 @@ windows:",
         project.name(),
         project
             .get_project_root()
+            .expect("Failed to get the projects root")
             .to_str()
             .expect("Failed to cast pathbuf to string"),
     );
@@ -165,7 +166,7 @@ mod tests {
 
         let config: WorkflowsConfig = toml::from_str(toml).unwrap();
 
-        let project = Repo::new("test-repo", true, "Projects/test-repo");
+        let project = Repo::new("test-repo", true, Some("Projects/test-repo"));
 
         let generated_config = get_config_contents(&project, config.tmuxinator());
 
@@ -187,6 +188,7 @@ windows:
                 project.name(),
                 project
                     .get_project_root()
+                    .unwrap()
                     .to_str()
                     .expect("Failed to cast pathbuf to string"),
             )
@@ -202,7 +204,7 @@ windows:
 
         let config: WorkflowsConfig = toml::from_str(toml).unwrap();
 
-        let project = Repo::new("test-repo", true, "Projects/test-repo");
+        let project = Repo::new("test-repo", true, Some("Projects/test-repo"));
 
         let generated_config = get_config_contents(&project, config.tmuxinator());
 
@@ -224,6 +226,7 @@ windows:
                 project.name(),
                 project
                     .get_project_root()
+                    .unwrap()
                     .to_str()
                     .expect("Failed to cast pathbuf to string"),
                 DEFAULT_START_COMMAND

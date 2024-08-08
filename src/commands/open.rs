@@ -2,6 +2,7 @@ use std::{fs, io};
 
 use crate::config::WorkflowsConfig;
 use crate::intergrations;
+use crate::intergrations::fzf::get_project_dir;
 use crate::repo::Repo;
 
 /// Runs fzf with the user's projects, opening the one they select in a tmuxinator session
@@ -12,7 +13,7 @@ use crate::repo::Repo;
 pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
     let selected_project = intergrations::fzf::run_fzf(&config.fzf().open_prompt(), false, &config);
 
-    if let Some(selected_project) = selected_project {
+    if let Some(mut selected_project) = selected_project {
         if !selected_project.local() {
             if config.github().confirm_cloning()
                 && !casual::prompt("Project is not local, clone it to ~/Projects/?")
@@ -23,7 +24,14 @@ pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
             {
                 return Ok(());
             }
-            intergrations::gh::clone_repo(&selected_project, config.general().projects_dir())?;
+
+            match get_project_dir(&config) {
+                Some(project_dir) => {
+                    intergrations::gh::clone_repo(&selected_project, project_dir.clone())?;
+                    selected_project.set_project_dir(Some(project_dir));
+                }
+                None => return Ok(()),
+            }
         }
 
         intergrations::tmuxinator::run_tmuxinator(&selected_project, config.tmuxinator())?;
@@ -41,7 +49,7 @@ pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
 pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> io::Result<()> {
     let project_name = project_name.trim();
 
-    let local_projects = get_local_projects(config.general().projects_dir());
+    let local_projects = get_local_projects(config.general().projects_dirs());
 
     let matching_project = local_projects.iter().find(|x| x.name() == project_name);
 
@@ -62,26 +70,35 @@ pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> i
 /// # Returns
 ///
 /// A vec of strings containing the names of the directories in the project folder
-pub fn get_local_projects(project_dir: String) -> Vec<Repo> {
+pub fn get_local_projects(project_dirs: Vec<String>) -> Vec<Repo> {
     let home = dirs::home_dir().expect("Couldn't load home directory!");
-    let entries = match fs::read_dir(home.join(&project_dir)) {
-        Ok(entries) => entries,
-        Err(_) => {
-            fs::create_dir(home.join(&project_dir)).expect("Failed to create Projects directory");
-            fs::read_dir(home.join(&project_dir)).expect("Failed to read directroy")
-        }
-    };
 
-    let local_repos: Vec<Repo> = entries
-        .filter_map(|file| {
-            let path = file.ok()?.path();
-            if !path.is_dir() {
-                return None;
+    let mut local_repos = vec![];
+
+    for project_dir in project_dirs {
+        let entries = match fs::read_dir(home.join(&project_dir)) {
+            Ok(entries) => entries,
+            Err(_) => {
+                fs::create_dir(home.join(&project_dir))
+                    .expect("Failed to create Projects directory");
+                fs::read_dir(home.join(&project_dir)).expect("Failed to read directroy")
             }
-            path.file_name()?
-                .to_str()
-                .map(|x| Repo::new(x, true, &project_dir))
-        })
-        .collect();
+        };
+
+        let mut dirs_projects: Vec<Repo> = entries
+            .filter_map(|file| {
+                let path = file.ok()?.path();
+                if !path.is_dir() {
+                    return None;
+                }
+                path.file_name()?
+                    .to_str()
+                    .map(|x| Repo::new(x, true, Some(&project_dir)))
+            })
+            .collect();
+
+        local_repos.append(&mut dirs_projects);
+    }
+
     local_repos
 }
