@@ -11,6 +11,6 @@ pub fn git_clone(url: Option<String>, config: &WorkflowsConfig) -> Option<Repo> 
     Some(Repo::new(
         project_name,
         true,
-        Some(project_dir.to_string_lossy().to_string()),
+        Some(project_dir),
     ))
 }

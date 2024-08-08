@@ -1,6 +1,6 @@
 use std::{
     io,
-    process::{Command, Stdio}, path::PathBuf,
+    process::{Command, Stdio},
 };
 
 use crate::{config::WorkflowsConfig, repo::Repo};
@@ -17,13 +17,13 @@ pub enum PushedResult {
 ///
 /// # Returns
 ///
-/// An IO error if the repo doesn't exist, otherwise the project directory it was cloned to
-pub fn clone_repo(url: &str, config: &WorkflowsConfig) -> io::Result<PathBuf> {
+/// An IO error if the repo doesn't exist, otherwise the selected project_dir
+pub fn clone_repo(url: &str, config: &WorkflowsConfig) -> io::Result<String> {
     let project_dir = get_project_dir(config).expect("Failed to get a directory");
 
     let clone_dir = dirs::home_dir()
         .expect("Failed to get home dir")
-        .join(project_dir);
+        .join(project_dir.clone());
 
     let mut command = Command::new("git")
         .current_dir(clone_dir.clone())
@@ -32,7 +32,7 @@ pub fn clone_repo(url: &str, config: &WorkflowsConfig) -> io::Result<PathBuf> {
         .spawn()?;
 
     command.wait()?;
-    Ok(clone_dir)
+    Ok(project_dir)
 }
 
 /// Checks if the repo has every commit pushed

@@ -13,7 +13,7 @@ use crate::repo::Repo;
 pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
     let selected_project = intergrations::fzf::run_fzf(&config.fzf().open_prompt(), false, &config);
 
-    if let Some(selected_project) = selected_project {
+    if let Some(mut selected_project) = selected_project {
         if !selected_project.local() {
             if config.github().confirm_cloning()
                 && !casual::prompt("Project is not local, clone it to ~/Projects/?")
@@ -26,7 +26,10 @@ pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
             }
 
             match get_project_dir(&config) {
-                Some(project_dir) => intergrations::gh::clone_repo(&selected_project, project_dir)?,
+                Some(project_dir) => {
+                    intergrations::gh::clone_repo(&selected_project, project_dir.clone())?;
+                    selected_project.set_project_dir(Some(project_dir));
+                },
                 None => return Ok(()),
             }
             

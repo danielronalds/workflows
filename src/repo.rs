@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 /// This struct represents a project
 ///
 /// Terminology used is `Repo` as in theory it's a git repo
@@ -80,6 +80,10 @@ impl Repo {
             .join(format!("{}/", self.name));
 
         Some(project_root)
+    }
+
+    pub fn set_project_dir(&mut self, project_dir: Option<String>) {
+        self.project_dir = project_dir;
     }
 }
 
