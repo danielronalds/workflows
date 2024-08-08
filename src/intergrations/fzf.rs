@@ -126,7 +126,7 @@ pub fn get_project_dir(config: &WorkflowsConfig) -> Option<String> {
         return Some(projects_dirs[0].clone());
     }
 
-    let fzf = get_fzf_instance("Select a Project: ", config.fzf());
+    let fzf = get_fzf_instance("Select a Project Directory: ", config.fzf());
 
     fzf_wrapped::run_with_output(fzf, projects_dirs)
 }

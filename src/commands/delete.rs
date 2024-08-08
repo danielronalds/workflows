@@ -100,7 +100,12 @@ fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> 
     }
     println!("Deleting tmuxinator config");
     intergrations::tmuxinator::delete_tmuxinator(repo)?;
-    println!("Deleting project from ~/Projects/");
+    println!(
+        "Deleting project located at {}",
+        repo.get_project_root()
+            .expect("Failed to get project root")
+            .to_str().expect("Failed to get str")
+    );
     delete_project_dir(repo)?;
 
     println!("Deleted {}!", repo.name());
