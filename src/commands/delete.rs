@@ -51,6 +51,15 @@ pub fn delete_project(project: Option<String>, config: WorkflowsConfig) -> io::R
 /// - `repo`   The project to delete
 /// - `config` The user's config
 fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
+    let binding = repo
+        .get_project_root()
+        .expect("Failed to get project root");
+    let project_root = binding
+        .to_str()
+        .expect("Failed to get str");
+
+    println!("Deleting project located at {}\n", project_root.bold());
+
     if config.git().check_push() {
         // Checking if the project has been pushed
         print!("[{}] main pushed...", "~".bright_yellow());
@@ -100,12 +109,7 @@ fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> 
     }
     println!("Deleting tmuxinator config");
     intergrations::tmuxinator::delete_tmuxinator(repo)?;
-    println!(
-        "Deleting project located at {}",
-        repo.get_project_root()
-            .expect("Failed to get project root")
-            .to_str().expect("Failed to get str")
-    );
+    println!("Deleting project located at {}", project_root);
     delete_project_dir(repo)?;
 
     println!("Deleted {}!", repo.name());
