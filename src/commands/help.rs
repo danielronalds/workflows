@@ -12,6 +12,7 @@ Commands
   --new       -n   Creates a new project
   --open      -o   Opens a local project
   --clone     -c   Clones the git repo from the given URL and opens it using workflows
+  --borrow    -b   Clones a github project, prompting deletion after the session is closed
   --delete    -d   Deletes the given project from the local machine
   --health         Checks that workflows can access the required programs
   --help      -h   Show this dialog

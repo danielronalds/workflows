@@ -31,14 +31,14 @@ pub fn delete_project(project: Option<String>, config: WorkflowsConfig) -> io::R
                 eprintln!("No project named {} could be found!", project.bold());
                 Ok(())
             }
-            Some(repo) => delete_local_project(repo, config),
+            Some(repo) => delete_local_project(repo, false, config),
         };
     }
 
-    let project = intergrations::fzf::run_fzf(&config.fzf().delete_prompt(), true, &config);
+    let project = intergrations::fzf::run_fzf(&config.fzf().delete_prompt(), true, false, &config);
 
     if let Some(project) = project {
-        delete_local_project(&project, config)?;
+        delete_local_project(&project, false, config)?;
     }
 
     Ok(())
@@ -48,9 +48,14 @@ pub fn delete_project(project: Option<String>, config: WorkflowsConfig) -> io::R
 ///
 /// # Parameters
 ///
-/// - `repo`   The project to delete
-/// - `config` The user's config
-fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> {
+/// - `repo`        The project to delete
+/// - `default_yes` Whether the default option should be yes
+/// - `config`      The user's config
+pub fn delete_local_project(
+    repo: &Repo,
+    default_yes: bool,
+    config: WorkflowsConfig,
+) -> io::Result<()> {
     let binding = repo.get_project_root().expect("Failed to get project root");
     let project_root = binding.to_str().expect("Failed to get str");
 
@@ -100,9 +105,21 @@ fn delete_local_project(repo: &Repo, config: WorkflowsConfig) -> io::Result<()> 
         );
     }
 
-    if !casual::confirm(format!("Delete {}?", repo.name())) {
+    if !casual::prompt(format!("Delete {}?", repo.name()))
+        .suffix(match default_yes {
+            true => " [Y/n] ",
+            false => " [y/N] ",
+        })
+        .default(match default_yes {
+            true => "y".to_string(),
+            false => "n".to_string(),
+        })
+        .matches(|s| matches!(&*s.trim().to_lowercase(), "n" | "no" | "y" | "yes"))
+        .map(|s| matches!(&*s.to_lowercase(), "y" | "yes"))
+    {
         return Ok(());
     }
+
     println!("Deleting tmuxinator config");
     intergrations::tmuxinator::delete_tmuxinator(repo)?;
     println!("Deleting project located at {}", project_root);

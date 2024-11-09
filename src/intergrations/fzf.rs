@@ -11,29 +11,38 @@ use crate::config::WorkflowsConfig;
 use crate::intergrations;
 use crate::repo::Repo;
 
-/// Run fzf to select a project. If in delete mode, only local projects will be displayed
+/// Run fzf to select a project. Has flags to enable what projects will be shown
 ///
 /// # Parameters
 ///
 /// - `prompt`      The prompt to display in the fzf menu
-/// - `delete_mode` Whether the selected project will be deleted or not
+/// - `show_local`  Whether to show local projects or not
+/// - `show_remote` Whether to display github projects or not. Note: github integration also has to
+///                 be enabled
 /// - `config`      The users config
 ///
 /// # Returns
 ///
 /// A tuple with the first element being the name of the project selected, and the vec of Repos
 /// being the merged list of local and github repos
-pub fn run_fzf(prompt: &str, delete_mode: bool, config: &WorkflowsConfig) -> Option<Repo> {
+pub fn run_fzf(
+    prompt: &str,
+    show_local: bool,
+    show_remote: bool,
+    config: &WorkflowsConfig,
+) -> Option<Repo> {
     let mut fzf = get_fzf_instance(prompt, config.fzf());
 
     fzf.run().expect("Failed to run fzf");
 
     let local_projects = commands::get_local_projects(config.general().projects_dirs());
-    fzf.add_items(local_projects.clone())
-        .expect("Failed to add local repos");
+    if show_local {
+        fzf.add_items(local_projects.clone())
+            .expect("Failed to add local repos");
+    }
 
     let mut git_projects = vec![];
-    if config.github().enabled() && !delete_mode {
+    if config.github().enabled() && show_remote {
         git_projects = intergrations::gh::get_gh_repos(&local_projects);
         let _ = fzf.add_items(
             git_projects
