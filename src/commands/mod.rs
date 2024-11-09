@@ -22,3 +22,6 @@ pub use new::new_project;
 
 mod clone;
 pub use clone::git_clone;
+
+mod borrow;
+pub use borrow::borrow_project;

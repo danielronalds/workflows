@@ -55,5 +55,9 @@ fn main() -> io::Result<()> {
         }
     }
 
+    if args.contains(&"--borrow".to_string()) || args.contains(&"-b".to_string()) {
+        return commands::borrow_project(config);
+    }
+
     commands::open_project(config)
 }
