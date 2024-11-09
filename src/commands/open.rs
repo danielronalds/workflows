@@ -11,7 +11,8 @@ use crate::repo::Repo;
 ///
 /// - `config` The user's config
 pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
-    let selected_project = intergrations::fzf::run_fzf(&config.fzf().open_prompt(), true, true, &config);
+    let selected_project =
+        intergrations::fzf::run_fzf(&config.fzf().open_prompt(), true, true, &config);
 
     if let Some(mut selected_project) = selected_project {
         if !selected_project.local() {
