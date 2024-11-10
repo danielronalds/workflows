@@ -59,5 +59,9 @@ fn main() -> io::Result<()> {
         return commands::borrow_project(config);
     }
 
+    if args.contains(&"--list".to_string()) || args.contains(&"-l".to_string()) {
+        return commands::list_projects(config);
+    }
+
     commands::open_project(config)
 }

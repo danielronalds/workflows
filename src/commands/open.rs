@@ -62,7 +62,24 @@ pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> i
     Ok(())
 }
 
-/// Gets the projects currently in ~/Projects/
+/// Gets the projects currently in the given list of directories
+///
+/// # Parameters
+///
+/// - `project_dirs` The vec of directory names containing local projects
+///
+/// # Returns
+///
+/// A vec of strings containing the names of the directories in the project folder
+pub fn get_local_projects(project_dirs: Vec<String>) -> Vec<Repo> {
+    project_dirs
+        .iter()
+        .map(|x| get_local_project(x.to_string()))
+        .flatten()
+        .collect()
+}
+
+/// Gets the projects currently in the given project directory
 ///
 /// # Parameters
 ///
@@ -71,35 +88,32 @@ pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> i
 /// # Returns
 ///
 /// A vec of strings containing the names of the directories in the project folder
-pub fn get_local_projects(project_dirs: Vec<String>) -> Vec<Repo> {
+pub fn get_local_project(project_dir: String) -> Vec<Repo> {
     let home = dirs::home_dir().expect("Couldn't load home directory!");
 
     let mut local_repos = vec![];
 
-    for project_dir in project_dirs {
-        let entries = match fs::read_dir(home.join(&project_dir)) {
-            Ok(entries) => entries,
-            Err(_) => {
-                fs::create_dir(home.join(&project_dir))
-                    .expect("Failed to create Projects directory");
-                fs::read_dir(home.join(&project_dir)).expect("Failed to read directroy")
+    let entries = match fs::read_dir(home.join(&project_dir)) {
+        Ok(entries) => entries,
+        Err(_) => {
+            fs::create_dir(home.join(&project_dir)).expect("Failed to create Projects directory");
+            fs::read_dir(home.join(&project_dir)).expect("Failed to read directroy")
+        }
+    };
+
+    let mut dirs_projects: Vec<Repo> = entries
+        .filter_map(|file| {
+            let path = file.ok()?.path();
+            if !path.is_dir() {
+                return None;
             }
-        };
+            path.file_name()?
+                .to_str()
+                .map(|x| Repo::new(x, true, Some(&project_dir)))
+        })
+        .collect();
 
-        let mut dirs_projects: Vec<Repo> = entries
-            .filter_map(|file| {
-                let path = file.ok()?.path();
-                if !path.is_dir() {
-                    return None;
-                }
-                path.file_name()?
-                    .to_str()
-                    .map(|x| Repo::new(x, true, Some(&project_dir)))
-            })
-            .collect();
-
-        local_repos.append(&mut dirs_projects);
-    }
+    local_repos.append(&mut dirs_projects);
 
     local_repos
 }

@@ -25,3 +25,6 @@ pub use clone::git_clone;
 
 mod borrow;
 pub use borrow::borrow_project;
+
+mod list;
+pub use list::list_projects;
