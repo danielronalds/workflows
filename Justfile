@@ -12,3 +12,7 @@ fmt:
 # Runs clippy
 check:
     cargo clippy
+
+# Installs to system through cargo
+install:
+    cargo install --path .
