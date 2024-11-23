@@ -74,8 +74,7 @@ pub fn open_specific_project(project_name: String, config: WorkflowsConfig) -> i
 pub fn get_local_projects(project_dirs: Vec<String>) -> Vec<Repo> {
     project_dirs
         .iter()
-        .map(|x| get_local_project(x.to_string()))
-        .flatten()
+        .flat_map(|x| get_local_project(x.to_string()))
         .collect()
 }
 
