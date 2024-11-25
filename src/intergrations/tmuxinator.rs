@@ -130,15 +130,30 @@ pub fn delete_tmuxinator(project: &Repo) -> io::Result<()> {
     Ok(())
 }
 
-/// Attempts to run the selected project with tmuxinator
-///
-/// Fails if there is not a tmuxinator config for it to use
+/// Attempts to run the selected project with tmuxinator. If tmuxinator is not enabled, falls back
+/// to running a configured tmux session
 ///
 /// # Parameters
 ///
 /// - `project`  The project to run
 /// - `config`   The tmuxinator config of the program
 pub fn run_tmuxinator(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
+    if !config.enabled() {
+        let command = format!(
+            "tmux new -s {} -c {}",
+            project.name(),
+            project
+                .get_project_root()
+                .expect("Failed to get project's root")
+                .to_str()
+                .expect("Failed to convert Pathbuf to string")
+        );
+
+        let _ = Command::new("sh").args(["-c", &command]).spawn()?.wait();
+
+        return Ok(());
+    }
+
     // fresh_config() call going first as it's faster than checking if the project exists already
     if config.fresh_config() || !tmuxinator_project_exist(project) {
         create_tmuxinator_config(project, config)?;

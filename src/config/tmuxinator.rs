@@ -9,24 +9,23 @@ pub const DEFAULT_START_COMMAND: &str = "nvim .";
 #[derive(Debug, Deserialize, Default, Clone, PartialEq, Eq)]
 /// The Tmuxinator config options
 pub struct TmuxinatorConfig {
-    /// Whether a new tmuxinator config should be generated every boot
-    ///
-    /// Default: `false`
+    // Docs in the getter methods
+    enabled: Option<bool>,
     fresh_config: Option<bool>,
-
-    /// The command to run on opening the tmuxinator session
-    ///
-    /// Default: `"editor"`
     window_names: Option<Vec<String>>,
-
-    /// The name of the tmuxinator spawned window
-    ///
-    /// Default: `"nvim ."`
     start_commands: Option<Vec<String>>,
 }
 
 impl TmuxinatorConfig {
-    /// The name of the tmuxinator spawned window
+    /// Whether Tmuxinator support should be enabled. If false, then tmux is called in the launched
+    /// directory
+    ///
+    /// Default: `true`
+    pub fn enabled(&self) -> bool {
+        self.enabled.unwrap_or(true)
+    }
+
+    /// Whether a new tmuxinator config should be generated every boot
     ///
     /// Default: `false`
     pub fn fresh_config(&self) -> bool {

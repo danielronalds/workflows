@@ -9,6 +9,9 @@ dev:
 fmt:
     cargo fmt
 
+test:
+    cargo test
+
 # Runs clippy
 check:
     cargo clippy
