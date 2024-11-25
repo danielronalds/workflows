@@ -21,9 +21,9 @@ Projects are selected using `fzf` for a fluent keyboard driven workflow.
 | `gh` | Viewing and Cloning github projects | Optional |
 | `git` | Checking the status of local repos | Optional |
 | `tmux` | Terminal Multliplexer that projects are launched in | Yes |
-| `tmuxinator` | Session manager for `tmux` | Yes |
+| `tmuxinator` | Session manager for `tmux` | Optional |
 
-Both `gh` and `git` integration can be disabled via configuration,
+`gh`, `git`, and `tmuxinator` integration can be disabled via configuration,
 however they are both enabled by default.
 
 ### Checking Requirements
@@ -201,6 +201,7 @@ check_tree=true
 check_push=true
 
 [tmuxinator]
+enabled=true
 fresh_config=false
 window_names=["editor"]
 start_commands=["nvim ."]
@@ -251,6 +252,7 @@ requirements is not fulfilled then both of these options will always be false wh
 
 | Option | Purpose | Default Value |
 | ------ | ------- | ------------- | 
+| `enabled` | Whether tmuxinator should be used to launch projects. Tmuxinator supports setting up workspaces, however it also increases loadtime of a workspace. Disabling it results in projects being launched with a named session with a single window in the root of the project | `true` |
 | `fresh_config` | If enabled, a tmuxinator configuration will be generated before every project launch. This can be useful if you've updated the other two options below | `false` |
 | `window_names` | An array of names of the tmux windows tmuxinator should create | `["editor"]` |
 | `start_commands` | An array of the commands to run for each window when tmux is started. If there are not enough commands for the defined windows, then the default option is used. | `["nvim ."]` |
