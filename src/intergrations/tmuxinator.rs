@@ -139,19 +139,7 @@ pub fn delete_tmuxinator(project: &Repo) -> io::Result<()> {
 /// - `config`   The tmuxinator config of the program
 pub fn run_tmuxinator(project: &Repo, config: TmuxinatorConfig) -> io::Result<()> {
     if !config.enabled() {
-        let command = format!(
-            "tmux new -s {} -c {}",
-            project.name(),
-            project
-                .get_project_root()
-                .expect("Failed to get project's root")
-                .to_str()
-                .expect("Failed to convert Pathbuf to string")
-        );
-
-        let _ = Command::new("sh").args(["-c", &command]).spawn()?.wait();
-
-        return Ok(());
+        return crate::intergrations::tmux::run_tmux(project);
     }
 
     // fresh_config() call going first as it's faster than checking if the project exists already
