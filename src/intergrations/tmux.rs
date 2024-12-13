@@ -1,6 +1,6 @@
 //! This module contains all logic for interacting with the `tmux` command line program
 
-use std::{io, process::Command};
+use std::{env, io, process::Command};
 
 use crate::repo::Repo;
 
@@ -47,7 +47,12 @@ pub fn run_tmux(project: &Repo) -> io::Result<()> {
 ///
 /// - `session_name` The session to attach to
 fn attach_tmux_session(session_name: String) -> io::Result<()> {
-    let command = format!("tmux a -t {}", session_name);
+    let is_tmux_session = env::var("TMUX").is_ok();
+
+    let command = match is_tmux_session {
+        true => format!("tmux switch -t {}", session_name),
+        false => format!("tmux a -t {}", session_name),
+    };
 
     let _ = Command::new("sh").args(["-c", &command]).spawn()?.wait();
 
@@ -61,7 +66,7 @@ fn attach_tmux_session(session_name: String) -> io::Result<()> {
 /// - `project` The project to create a session for
 fn create_tmux_session(project: &Repo) -> io::Result<()> {
     let command = format!(
-        "tmux new -s {} -c {}",
+        "tmux new -s {} -c {} -d",
         project.name(),
         project
             .get_project_root()
@@ -72,5 +77,5 @@ fn create_tmux_session(project: &Repo) -> io::Result<()> {
 
     let _ = Command::new("sh").args(["-c", &command]).spawn()?.wait();
 
-    Ok(())
+    attach_tmux_session(project.name())
 }
