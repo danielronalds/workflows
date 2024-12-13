@@ -18,7 +18,7 @@ fn get_active_tmux_session() -> io::Result<Vec<String>> {
         .lines()
         .filter(|x| !x.is_empty())
         .filter_map(|x| {
-            let session_name = x.split(':').nth(0)?.to_string();
+            let session_name = x.split(':').next()?.to_string();
             Some(session_name)
         })
         .collect();
