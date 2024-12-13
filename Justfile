@@ -12,8 +12,10 @@ fmt:
 test:
     cargo test
 
-# Runs clippy
+# Runs test, fmt --check, and clippy. Ideal before commiting
 check:
+    cargo test
+    cargo fmt --check
     cargo clippy
 
 # Installs to system through cargo
