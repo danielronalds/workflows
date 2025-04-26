@@ -17,7 +17,7 @@ pub fn open_project(config: WorkflowsConfig) -> io::Result<()> {
     if let Some(mut selected_project) = selected_project {
         if !selected_project.local() {
             if config.github().confirm_cloning()
-                && !casual::prompt("Project is not local, clone it to ~/Projects/?")
+                && !casual::prompt("Project is not local, clone it?")
                     .suffix(" [Y/n] ")
                     .default("y".to_string())
                     .matches(|s| matches!(&*s.trim().to_lowercase(), "n" | "no" | "y" | "yes"))
